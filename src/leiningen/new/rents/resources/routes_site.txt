@@ -1,0 +1,3 @@
+GET  /            home-get
+POST /            home-post
+GET  /healthcheck healthcheck

@@ -1,0 +1,9 @@
+GET      /api             entry-point
+
+GET      /api/people      list-people
+POST     /api/people      create-person
+GET      /api/people/:id  read-person
+PUT      /api/people/:id  update-person
+DELETE   /api/people/:id  delete-person
+
+GET      /healthcheck     healthcheck

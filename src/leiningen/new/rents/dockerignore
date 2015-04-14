@@ -1,0 +1,7 @@
+.dockerignore
+.git
+.lein-repl-history
+config
+dev
+README.md
+target
