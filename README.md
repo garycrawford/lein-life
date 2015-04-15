@@ -1,3 +1,5 @@
+[![Build Status](https://snap-ci.com/garycrawford/lein-rents/branch/master/build_image)](https://snap-ci.com/garycrawford/lein-rents/branch/master)
+
 # lein-rents
 A Leiningen template which produces a docker ready web application.
 
