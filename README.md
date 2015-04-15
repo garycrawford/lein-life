@@ -12,22 +12,28 @@ alt="Binary Rents" title="Renton from Trainspotting" align="right" />
 > and then we die.
 > - Mark Renton, Trainspotting by Irvine Welsh
 
+Rents is a Leiningen template to give your project a better environment and chance in life than Mark Renton!
+
 
 # Usage
 [![Build Status](https://snap-ci.com/garycrawford/lein-rents/branch/master/build_image)](https://snap-ci.com/garycrawford/lein-rents/branch/master)
-
-A Leiningen template which produces a docker ready site or api with embedded Jetty web-server, Graphite/Grafanna instrumentation and many customisations.
-
 
 You can use this template by executing:
 
     $ lein new rents <project-name> <type> [options]
 
-Types:
-* api      Create a new web api
-* site     Create a new site
 
-You can then launch the app by:
+    Types:
+      api  | Create a new web api
+      site | Create a new site
+    
+    Options:
+      -d, --db   | DATABASE | Database to be used. Currently only supports `mongodb`
+      -v         |          | Verbosity level; may be specified multiple times to increase value
+      -h, --help |          |
+
+
+You can then launch the igenerated app or site by executing:
 
     $ cd <project-name>
     $ docker-compose up
