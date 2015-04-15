@@ -3,6 +3,14 @@
 <img src="https://raw.githubusercontent.com/garycrawford/lein-rents/master/images/binary_rents.png"
 alt="Binary Rents" title="Renton from Trainspotting" align="right" />
 
+> We start off with high hopes, then we bottle it. We realise
+> that we’re all going to die, without really finding out the
+> big answers. We develop all those long-winded ideas which just
+> interpret the reality of our lives in different ways, without
+> really extending our body of worthwhile knowledge, about the big
+> things, the real things. Basically, we live a short disappointing life;
+> and then we die. > - from [Trainspotting] by Irvine Welsh
+
 
 # Usage
 [![Build Status](https://snap-ci.com/garycrawford/lein-rents/branch/master/build_image)](https://snap-ci.com/garycrawford/lein-rents/branch/master)
