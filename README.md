@@ -12,7 +12,7 @@ alt="Binary Rents" title="Renton from Trainspotting" align="right" />
 > and then we die.
 > - Mark Renton, Trainspotting by Irvine Welsh
 
-Rents is a Leiningen template to give your project a better environment and chance in life than Mark Renton!
+Rents is a Leiningen template to give your project a better environment and chance in life than Mark Renton! It utilises Docker to give you a production like environment running locally on your dev machine where things like metrics and logging now become first class citizens of you dev lifecycle.
 
 
 # Usage
@@ -22,15 +22,13 @@ You can use this template by executing:
 
     $ lein new rents <project-name> <type> [options]
 
-
-    Types:
-      api  | Create a new web api
-      site | Create a new site
+    types:
+      api   Create a new web api
+      site  Create a new site
     
-    Options:
-      -d, --db   | DATABASE | Database to be used. Currently only supports `mongodb`
-      -v         |          | Verbosity level; may be specified multiple times to increase value
-      -h, --help |          |
+    options:
+      -d, --db    DATABASE  Currently only supports `mongodb`
+      -h, --help           
 
 
 You can then launch the igenerated app or site by executing:
