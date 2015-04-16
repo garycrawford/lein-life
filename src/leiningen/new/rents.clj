@@ -35,6 +35,7 @@
 (def cli-options
   [["-d" "--db DATABASE" "Database to be used. Currently only supports `mongodb`"
     :parse-fn keyword
+    :default :mongodb
     :validate [#(= % :mongodb) "Currently only mongodb is currently supported"]]
    ["-v" nil "Verbosity level; may be specified multiple times to increase value"
     ;; If no long-option is specified, an option :id must be given
@@ -52,8 +53,9 @@
         "Usage: lein new rents <project-name> <type> [options]"
         ""
         "Types:"
-        "  api      Create a new web api"
-        "  site     Create a new site"
+        "  site       Create a new site"
+        "  api        Create a new web api"
+        "  site+api   Create a new site with api back end"
         ""
         "Options:"
         options-summary
@@ -77,8 +79,10 @@
        (not= (count arguments) 1) (exit 1 (usage summary))
        errors (exit 1 (error-msg errors)))
    
-     ;; Execute program with options
      (case (first arguments)
        "api" (create-project name api-files api-var-map options)
        "site" (create-project name site-files site-var-map options)
+       "site+api" (do
+                    (create-project (str name "-site") site-files site-var-map options)
+                    (create-project (str name "-api") api-files api-var-map options))
        (exit 1 (usage summary))))))
