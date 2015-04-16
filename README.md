@@ -1,6 +1,6 @@
-# Lein Rents
+# Rents
 
-<img src="https://raw.githubusercontent.com/garycrawford/lein-rents/master/images/binary_rents.jpg"
+<img src="https://raw.githubusercontent.com/garycrawford/lein-rents/master/images/binary_rents.png"
 alt="Binary Rents" title="Renton from Trainspotting" align="right" />
 
 > We start off with high hopes, then we bottle it. We realise
@@ -24,13 +24,15 @@ You can use this template by executing:
 
 
     Types:
-      api  | Create a new web api
-      site | Create a new site
+      api      | Create a new web api
+      site     | Create a new site
+      site+api | Create a new site with a new api backend
     
     Options:
-      -d, --db   | DATABASE | Database to be used. Currently only supports `mongodb`
-      -v         |          | Verbosity level; may be specified multiple times to increase value
-      -h, --help |          |
+      -d, --db   | DATABASE  | Database to be used. Currently only supports `mongodb`
+      -s, --site | SITE-NAME | Name of the site project
+      -a, --api  | API-NAME  | Name of the api project
+      -h, --help |           |
 
 
 You can then launch the igenerated app or site by executing:
