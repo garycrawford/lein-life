@@ -6,29 +6,32 @@
             [leiningen.new.site :refer [site-files]]
             [clojure.string :as string]
             [leiningen.new.common-api-templates :refer [api-var-map]]
-            [leiningen.new.common-site-templates :refer [site-var-map]]))
+            [leiningen.new.common-site-templates :refer [site-var-map]]
+            [leiningen.new.templates :refer  [*force?*]]))
 
 (def render (renderer "rents"))
 
 (defn template-data
-  [name var-map-fn options]
-  (let [ns-name (sanitize-ns name)
+  [project-name ns-name var-map-fn options]
+  (let [sanitized-ns-name (sanitize-ns ns-name)
         docker-name (string/replace name #"-" "")
-        dockerised-svr (str (->PascalCase (sanitize-ns name)) "DevSvr")]
-    (merge {:name name
-            :ns-name ns-name
-            :sanitized (name-to-path name)
+        dockerised-svr (str (->PascalCase (sanitize-ns project-name)) "DevSvr")]
+    (merge {:name project-name
+            :ns-name sanitized-ns-name
             :year (str (.get (java.util.Calendar/getInstance) java.util.Calendar/YEAR))
             :name-template "{{name}}"
             :location-template "{{location}}"
             :anti-forgery-field "{{{anti-forgery-field}}}"
             :title-template "{{title}}"
-            :dockerised-svr dockerised-svr}
-          (var-map-fn ns-name docker-name dockerised-svr options))))
+            :dockerised-svr dockerised-svr
+            :project-root (str (:name options) "/")
+            :sanitized-site (name-to-path (:site options))
+            :sanitized-api  (name-to-path (:api options))}
+          (var-map-fn sanitized-ns-name docker-name dockerised-svr options))))
 
 (defn create-project
-  [name files-fn var-map-fn options]
-  (let [data (template-data name var-map-fn options)
+  [name ns-name files-fn var-map-fn options]
+  (let [data (template-data name ns-name var-map-fn options)
         files (files-fn data options)]
      (apply ->files data files)))
 
@@ -37,12 +40,10 @@
     :parse-fn keyword
     :default :mongodb
     :validate [#(= % :mongodb) "Currently only mongodb is currently supported"]]
-   ["-v" nil "Verbosity level; may be specified multiple times to increase value"
-    ;; If no long-option is specified, an option :id must be given
-    :id :verbosity
-    :default 0
-    ;; Use assoc-fn to create non-idempotent options
-    :assoc-fn (fn [m k _] (update-in m [k] inc))]
+   ["-s" "--site SITE" "Name of the directory in which site files will be created"
+    :default "site"]
+   ["-a" "--api API" "Name of the directory which api files will be created"
+    :default "api"]
    ["-h" "--help"]])
 
 (defn usage [options-summary]
@@ -80,9 +81,10 @@
        errors (exit 1 (error-msg errors)))
    
      (case (first arguments)
-       "api" (create-project name api-files api-var-map options)
-       "site" (create-project name site-files site-var-map options)
-       "site+api" (do
-                    (create-project (str name "-site") site-files site-var-map options)
-                    (create-project (str name "-api") api-files api-var-map options))
+       "api" (create-project name (:api options) api-files api-var-map options)
+       "site" (create-project name (:site options) site-files site-var-map options)
+       "site+api" (binding [*force?* true]
+                    (do
+                      (create-project name (:site options) site-files site-var-map options)
+                      (create-project name (:api options) api-files api-var-map options)))
        (exit 1 (usage summary))))))
