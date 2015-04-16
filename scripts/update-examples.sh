@@ -16,8 +16,9 @@ create_new () {
   	rm -rf "./$1"
   fi
 
-  lein new rents $1 $2 --db mongodb
+  lein new rents $1 $2
 }
 
 create_new example-site site
 create_new example-api api
+create_new example-both site+api

@@ -9,3 +9,4 @@ pom.xml.asc
 .nrepl-port
 example-site
 example-api
+example-both

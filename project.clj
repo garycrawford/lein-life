@@ -15,5 +15,7 @@
   :plugins [[lein-shell "0.4.0"]]
   :aliases {"." ["do"
                   ["shell" "scripts/update-examples.sh"]
-                  ["shell" "scripts/run-tests.sh" "example-site"]
-                  ["shell" "scripts/run-tests.sh" "example-api"]]})
+                  ["shell" "scripts/run-tests.sh" "example-site/site"]
+                  ["shell" "scripts/run-tests.sh" "example-api/api"]
+                  ["shell" "scripts/run-tests.sh" "example-both/site"]
+                  ["shell" "scripts/run-tests.sh" "example-both/api"]]})

@@ -3,8 +3,8 @@
             [com.stuartsierra.component :as component]
             [metrics.core :refer [new-registry]]
             [ring.mock.request :as mock]
-            [example-api.components.jetty.lifecycle :refer [create-handler]]
-            [example-api.components.mongodb.lifecycle :refer [new-mongodb]]
+            [{{ns-name}}.components.jetty.lifecycle :refer [create-handler]]
+            [{{ns-name}}.components.mongodb.lifecycle :refer [new-mongodb]]
             [cheshire.core :refer [decode]]
             [monger.db :refer [drop-db]]))
 
