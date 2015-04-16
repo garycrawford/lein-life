@@ -40,9 +40,9 @@
     :parse-fn keyword
     :default :mongodb
     :validate [#(= % :mongodb) "Currently only mongodb is currently supported"]]
-   ["-s" "--site SITE" "Name of the directory in which site files will be created"
+   ["-s" "--site SITE" "Name of the site project"
     :default "site"]
-   ["-a" "--api API" "Name of the directory which api files will be created"
+   ["-a" "--api API" "Name of the api project"
     :default "api"]
    ["-h" "--help"]])
 
