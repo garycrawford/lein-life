@@ -7,33 +7,10 @@
             [clojure.string :as string]
             [leiningen.new.common-api-templates :refer [api-var-map]]
             [leiningen.new.common-site-templates :refer [site-var-map]]
-            [leiningen.new.templates :refer  [*force?*]]))
+            [leiningen.new.templates :refer  [*force?*]]
+            [leiningen.new.common-templates :refer [compose-api-proj compose-site-proj compose-deps]]))
 
 (def render (renderer "rents"))
-
-(defn template-data
-  [project-name ns-name var-map-fn options]
-  (let [sanitized-ns-name (sanitize-ns ns-name)
-        docker-name (string/replace name #"-" "")
-        dockerised-svr (str (->PascalCase (sanitize-ns project-name)) "DevSvr")]
-    (merge {:name project-name
-            :ns-name sanitized-ns-name
-            :year (str (.get (java.util.Calendar/getInstance) java.util.Calendar/YEAR))
-            :name-template "{{name}}"
-            :location-template "{{location}}"
-            :anti-forgery-field "{{{anti-forgery-field}}}"
-            :title-template "{{title}}"
-            :dockerised-svr dockerised-svr
-            :project-root (str (:name options) "/")
-            :sanitized-site (name-to-path (:site options))
-            :sanitized-api  (name-to-path (:api options))}
-          (var-map-fn sanitized-ns-name docker-name dockerised-svr options))))
-
-(defn create-project
-  [name ns-name files-fn var-map-fn options]
-  (let [data (template-data name ns-name var-map-fn options)
-        files (files-fn data options)]
-     (apply ->files data files)))
 
 (def cli-options
   [["-d" "--db DATABASE" "Database to be used. Currently only supports `mongodb`"
@@ -71,6 +48,77 @@
   (println msg)
   (System/exit status))
 
+(defn template-data
+  [project-name ns-name var-map-fn options]
+  (let [sanitized-ns-name (sanitize-ns ns-name)
+        docker-name (string/replace project-name #"-" "")
+        dockerised-svr (str (->PascalCase (sanitize-ns project-name)) "DevSvr")]
+    (merge {:name project-name
+            :ns-name sanitized-ns-name
+            :year (str (.get (java.util.Calendar/getInstance) java.util.Calendar/YEAR))
+            :name-template "{{name}}"
+            :location-template "{{location}}"
+            :anti-forgery-field "{{{anti-forgery-field}}}"
+            :title-template "{{title}}"
+            :dockerised-svr dockerised-svr
+            :project-root (str (:name options) "/")
+            :docker-site-name (string/replace (:site options) #"-" "")
+            :docker-api-name (string/replace (:api options) #"-" "")
+            :sanitized-site (name-to-path (:site options))
+            :sanitized-api  (name-to-path (:api options))}
+          (var-map-fn sanitized-ns-name docker-name dockerised-svr options))))
+
+(defn site-template-data
+  [project-name ns-name options]
+  (let [sanitized-ns-name (sanitize-ns ns-name)
+        docker-name (string/replace sanitized-ns-name #"-" "")
+        dockerised-svr (str (->PascalCase sanitized-ns-name) "DevSvr")]
+    (merge {:name project-name
+            :ns-name sanitized-ns-name
+            :year (str (.get (java.util.Calendar/getInstance) java.util.Calendar/YEAR))
+            :dockerised-svr dockerised-svr
+            :project-root (str project-name "/")
+            :docker-site-name (string/replace ns-name #"-" "")
+            :sanitized-site (name-to-path ns-name)
+            :name-template "{{name}}"
+            :location-template "{{location}}"
+            :anti-forgery-field "{{{anti-forgery-field}}}"
+            :title-template "{{title}}"}
+          (site-var-map sanitized-ns-name docker-name dockerised-svr options))))
+
+(defn names
+  [ns-name]
+  (let [sanitized-name (sanitize-ns ns-name)]
+    {:docker-name (string/replace sanitized-name #"-" "")
+     :ns-name sanitized-name
+     :dockerised-svr (str (->PascalCase sanitized-name) "DevSvr")}))
+
+(defn api-template-data
+  [project-name ns-name options]
+  (let [sanitized-name (sanitize-ns ns-name)
+        docker-name (string/replace sanitized-name #"-" "")
+        dockerised-svr (str (->PascalCase sanitized-name) "DevSvr")]
+    (merge {:name project-name
+            :ns-name sanitized-name
+            :year (str (.get (java.util.Calendar/getInstance) java.util.Calendar/YEAR))
+            :dockerised-svr dockerised-svr
+            :project-root (str project-name "/")
+            :docker-api-name (string/replace ns-name #"-" "")
+            :sanitized-api  (name-to-path ns-name)}
+          (api-var-map sanitized-name docker-name dockerised-svr options))))
+
+(defn create-site
+  [parent-name ns-name options]
+  (let [data (site-template-data parent-name ns-name options)
+        files (site-files data options)]
+     (apply ->files data files)))
+
+(defn create-api
+  [parent-name ns-name options]
+  (let [data (api-template-data parent-name ns-name options)
+        files (api-files data options)]
+     (apply ->files data files)))
+
 (defn rents
   ([name] (rents name "--help"))
   ([name & args]
@@ -81,10 +129,19 @@
        errors (exit 1 (error-msg errors)))
    
      (case (first arguments)
-       "api" (create-project name (:api options) api-files api-var-map options)
-       "site" (create-project name (:site options) site-files site-var-map options)
+       "api" (do
+               (create-api name (:api options) options)
+               (spit (str name "/docker-compose.yml") (compose-api-proj (names (:api options)) options) :append true)
+               (spit (str name "/docker-compose.yml") (compose-deps options) :append true))
+       "site" (do
+                (create-site name (:site options) options)
+                (spit (str name "/docker-compose.yml") (compose-site-proj (names (:site options)) options) :append true)
+                (spit (str name "/docker-compose.yml") (compose-deps options) :append true))
        "site+api" (binding [*force?* true]
                     (do
-                      (create-project name (:site options) site-files site-var-map options)
-                      (create-project name (:api options) api-files api-var-map options)))
+                      (create-site name (:site options) options)
+                      (spit (str name "/docker-compose.yml") (compose-site-proj (names (:site options)) options) :append true)
+                      (create-api name (:api options) options)
+                      (spit (str name "/docker-compose.yml") (compose-api-proj (names (:api options)) options) :append true)
+                      (spit (str name "/docker-compose.yml") (compose-deps options) :append true)))
        (exit 1 (usage summary))))))

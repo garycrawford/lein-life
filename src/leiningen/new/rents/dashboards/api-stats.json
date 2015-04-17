@@ -1,7 +1,7 @@
 {
   "id": null,
-  "title": "App Stats",
-  "originalTitle": "App Stats",
+  "title": "{{ns-name}} stats",
+  "originalTitle": "{{ns-name}} stats",
   "tags": [],
   "style": "dark",
   "timezone": "browser",

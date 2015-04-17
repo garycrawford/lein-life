@@ -71,8 +71,8 @@
 
 (defn dashboards-files
   [data]
-  [["{{sanitized-site}}/dashboards/dashboard-loader.js" (render "dashboards/dashboard-loader.js" data)]
-   ["{{sanitized-site}}/dashboards/app-stats.json" (render "dashboards/app-stats.json" data)]])
+  [["dashboards/dashboard-loader.js" (render "dashboards/dashboard-loader.js" data)]
+   ["dashboards/app-stats.json" (render "dashboards/site-stats.json" data)]])
 
 (defn resources-files
   [data]
@@ -85,10 +85,10 @@
 
 (defn project-files
   [data]
-   [["{{sanitized-site}}/project.clj" (render "project.clj" data)]
+   [;["docker-compose.yml" (render "docker-compose.yml" data)]
+    ["{{sanitized-site}}/project.clj" (render "project.clj" data)]
     ["{{sanitized-site}}/profiles.clj" (render "profiles.clj" data)]
     ["{{sanitized-site}}/Dockerfile" (render "Dockerfile" data)]
-    ["{{sanitized-site}}/docker-compose.yml" (render "docker-compose.yml" data)]
     ["{{sanitized-site}}/.dockerignore" (render "dockerignore" data)]
     ["{{sanitized-site}}/.gitignore" (render "gitignore" data)]
     ["{{sanitized-site}}/.midje.clj" (render "midje.clj" data)]
