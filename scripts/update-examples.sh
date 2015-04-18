@@ -16,7 +16,7 @@ create_new () {
   	rm -rf "./$1"
   fi
 
-  lein new rents $1 $2
+  lein new life $1 $2
 }
 
 create_new example-site site

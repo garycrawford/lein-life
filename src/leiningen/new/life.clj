@@ -1,4 +1,4 @@
-(ns leiningen.new.rents
+(ns leiningen.new.life
   (:use [leiningen.new.templates :only [renderer name-to-path sanitize-ns ->files]])
   (:require [camel-snake-kebab.core :refer [->PascalCase]]
             [clojure.tools.cli :refer  [parse-opts]]
@@ -10,7 +10,7 @@
             [leiningen.new.templates :refer  [*force?*]]
             [leiningen.new.common-templates :refer [compose-api-proj compose-site-proj compose-deps]]))
 
-(def render (renderer "rents"))
+(def render (renderer "life"))
 
 (def cli-options
   [["-d" "--db DATABASE" "Database to be used. Currently only supports `mongodb`"
@@ -28,7 +28,7 @@
         "A Leiningen template which produces a docker ready site or api with embedded"
         "Jetty web-server, Graphite/Grafanna instrumentation and many customisations."
         ""
-        "Usage: lein new rents <project-name> <type> [options]"
+        "Usage: lein new life <project-name> <type> [options]"
         ""
         "Types:"
         "  site       Create a new site"
@@ -119,8 +119,8 @@
         files (api-files data options)]
      (apply ->files data files)))
 
-(defn rents
-  ([name] (rents name "--help"))
+(defn life
+  ([name] (life name "--help"))
   ([name & args]
    (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
      (cond

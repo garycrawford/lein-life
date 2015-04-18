@@ -1,6 +1,6 @@
-(defproject rents/lein-template "0.0.1"
+(defproject life/lein-template "0.0.1"
   :description "Lein template for generating dockerised Clojure sites and apis"
-  :url "https://github.com/garycrawford/lein-rents"
+  :url "https://github.com/garycrawford/lein-life"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :eval-in-leiningen true
@@ -11,7 +11,7 @@
                  [com.gfredericks/test.chuck "0.1.16"]
                  [kerodon "0.5.0"]]
   :scm {:name "git"
-        :url "https://github.com/garycrawford/lein-rents"}
+        :url "https://github.com/garycrawford/lein-life"}
   :plugins [[lein-shell "0.4.0"]]
   :aliases {"." ["do"
                   ["shell" "scripts/update-examples.sh"]

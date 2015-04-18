@@ -1,7 +1,7 @@
 (ns leiningen.new.site
   (:require [leiningen.new.templates :refer [renderer]]))
 
-(def render (renderer "rents"))
+(def render (renderer "life"))
 
 (defn component-files
   [data {:keys [db]}]

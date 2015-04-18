@@ -1,7 +1,7 @@
-# Rents
+# Life
 
-<img src="https://raw.githubusercontent.com/garycrawford/lein-rents/master/images/binary_rents.png"
-alt="Binary Rents" title="Renton from Trainspotting" align="right" />
+<img src="https://raw.githubusercontent.com/garycrawford/lein-life/master/images/binary_renton.png"
+alt="Binary Renton" title="Renton from Trainspotting" align="right" />
 
 > We start off with high hopes, then we bottle it. We realise
 > that we’re all going to die, without really finding out the
@@ -20,7 +20,7 @@ Rents is a Leiningen template to give your project a better environment and chan
 
 You can use this template by executing:
 
-    $ lein new rents <project-name> <type> [options]
+    $ lein new life <project-name> <type> [options]
 
     Types:
       api      | Create a new web api
