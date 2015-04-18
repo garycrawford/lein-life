@@ -140,7 +140,7 @@
        "site+api" (binding [*force?* true]
                     (do
                       (create-site name (:site options) options)
-                      (spit (str name "/docker-compose.yml") (compose-site-proj (names (:site options)) options) :append true)
+                      (spit (str name "/docker-compose.yml") (compose-site-proj (merge (names (:site options)) {:api-docker-name (:api options)}) options) :append true)
                       (create-api name (:api options) options)
                       (spit (str name "/docker-compose.yml") (compose-api-proj (names (:api options)) options) :append true)
                       (spit (str name "/docker-compose.yml") (compose-deps options) :append true)))
