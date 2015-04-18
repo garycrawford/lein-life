@@ -42,39 +42,6 @@
                      construct-template)]
     (format template ns-name dockerised-svr)))
 
-(defn docker-compose
-  [docker-name svr-name ns-name {:keys [db]}]
-  (let [template (-> ["%1s:"                                                     always
-                      "  build: ."                                               always
-                      "  ports:"                                                 always
-                      "   - \"1234:1234\""                                       always
-                      "   - \"21212:21212\""                                     always
-                      "  volumes:"                                               always
-                      "   - .:/usr/src/app"                                      always
-                      "  links:"                                                 always
-                      "   - metrics"                                             always
-                      "   - persistence"                                         #(mongodb? db)
-                      "  hostname: \"%2s\""                                      always
-                      "  environment:"                                           always
-                      "     MONGODB_URI: mongodb://192.168.59.103/%3$s"          #(mongodb? db)
-                      "     METRICS_HOST: 192.168.59.103"                        always
-                      "     METRICS_PORT: 2003"                                  always
-                      "     APP_NAME: %3$s"                                      always
-                      "  command: lein repl :headless :host 0.0.0.0 :port 21212" always
-                      "metrics:"                                                 always
-                      "  image: garycrawford/grafana_graphite:0.0.1"             always
-                      "  volumes:"                                               always
-                      "   - ./dashboards:/src/dashboards"                        always
-                      "  ports:"                                                 always
-                      "   - \"80:80\""                                           always
-                      "   - \"2003:2003\""                                       always
-                      "persistence:"                                             #(mongodb? db)
-                      "   image: mongo:3.0.1"                                    #(mongodb? db)
-                      "   ports:"                                                #(mongodb? db)
-                      "   - \"27017:27017\""                                     #(mongodb? db)]
-                     construct-template)]
-    (format template docker-name svr-name ns-name)))
-
 (defn project-deps
   [{:keys [db]}]
   (-> [" :dependencies [[org.clojure/clojure \"1.6.0\"]"                                        always
@@ -163,5 +130,5 @@
    :system-comp-list (system-comp-list-str options)
    :system-dep-graph (system-dep-graph ns-name options)
    :project-deps (project-deps options)
-   :docker-compose (docker-compose docker-name dockerised-svr ns-name options)
+   ; :docker-compose (docker-compose docker-name dockerised-svr ns-name options)
    :dev-profile (dev-profile ns-name dockerised-svr options)})

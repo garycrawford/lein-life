@@ -41,7 +41,7 @@
 (defn wrap-metrics
   [handler metrics-registry]
   (if metrics-registry
-    (ring/instrument metrics-registry)
+    (ring/instrument handler metrics-registry)
     handler))
 
 (defn create-handler
