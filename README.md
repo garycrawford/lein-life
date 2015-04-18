@@ -1,6 +1,6 @@
 # Life
 
-<img src="https://raw.githubusercontent.com/garycrawford/lein-life/master/images/binary_renton.png"
+<img src="https://raw.githubusercontent.com/garycrawford/lein-rents/master/images/binary_renton.png"
 alt="Binary Renton" title="Renton from Trainspotting" align="right" />
 
 > We start off with high hopes, then we bottle it. We realise
