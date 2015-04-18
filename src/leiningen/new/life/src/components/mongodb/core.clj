@@ -4,23 +4,20 @@
             [monger.conversion :refer [to-object-id]]
             [taoensso.timbre :refer [info]]
             [robert.hooke :refer [prepend append]]
-            [hashids.core :refer [encode decode]]
+            [hashids.core :refer [encode-hex decode-hex]]
             [clojure.core.incubator :refer [dissoc-in]]))
 
 (def hashids-opts {:salt "this is my salt"})
 
 (defn mongoid->external
   [mongoid]
-  (let [[left-chars right-chars] (split-at 12 (.toStringMongod mongoid))
-        left-long (Long/parseLong (apply str left-chars) 16)
-        right-long (Long/parseLong (apply str right-chars) 16)]
-    (encode hashids-opts left-long right-long)))
+  (encode-hex hashids-opts (.toStringMongod mongoid)))
 
 (defn external->mongoid
   [external-id]
-  (let [[left-long right-long] (decode hashids-opts external-id)]
+  (let [[left-long right-long] (decode-hex hashids-opts external-id)]
     (to-object-id
-      (str (Long/toHexString left-long) (Long/toHexString right-long)))))
+      (apply str left-long right-long))))
 
 (defn externalise
   [doc]

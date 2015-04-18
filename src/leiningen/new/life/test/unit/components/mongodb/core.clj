@@ -2,8 +2,8 @@
   (:require [midje.sweet :refer :all]
             [{{ns-name}}.components.mongodb.core :refer :all]))
 
-(def mongo-id (monger.conversion/to-object-id "5527c7c1e4b0ef1647b88d9f"))
-(def external-id "EvZ7vRrEyPUgJ3mWqVmm")
+(def mongo-id (monger.conversion/to-object-id "507f191e810c19729de860ea"))
+(def external-id "yNyaoWeKWVINWqvaM9bw")
 (def dummy-doc {:_id mongo-id})
 (def dummy-query {:id external-id})
 
