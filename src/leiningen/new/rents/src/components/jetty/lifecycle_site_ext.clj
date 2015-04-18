@@ -32,13 +32,19 @@
         (assoc response :body (view-fn model))
         response))))
 
+(defn wrap-metrics
+  [handler metrics-registry]
+  (if metrics-registry
+    (ring/instrument handler metrics-registry)
+    handler))
+
 (defn create-handler
   [metrics-registry component]
   (-> (scenic/scenic-handler routes (routes-map component))
       (wrap-view-response)
       (json-response/wrap-json-response)
       (wrap-defaults site-defaults)
-      (ring/instrument metrics-registry)))
+      (wrap-metrics metrics-registry)))
 
 (defn start
   [{:keys [metrics-registry server] :as this}]
