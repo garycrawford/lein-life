@@ -108,40 +108,48 @@
           (api-var-map sanitized-name docker-name dockerised-svr options))))
 
 (defn create-site
-  [parent-name ns-name options]
-  (let [data (site-template-data parent-name ns-name options)
-        files (site-files data options)]
-     (apply ->files data files)))
+  ([parent-name options] (create-site parent-name options nil))
+  ([parent-name {:keys [site api] :as options} add-api-dep?]
+   (let [data (site-template-data parent-name site options)
+         files (site-files data options)
+         compose-path (str parent-name "/docker-compose.yml")
+         compose-site-content (compose-site-proj (merge (names site) (when add-api-dep? {:api-docker-name api})) options)]
+      (apply ->files data files)
+      (spit compose-path compose-site-content :append true))))
 
 (defn create-api
-  [parent-name ns-name options]
-  (let [data (api-template-data parent-name ns-name options)
-        files (api-files data options)]
-     (apply ->files data files)))
+  [parent-name {:keys [api] :as options}]
+  (let [data (api-template-data parent-name api options)
+        files (api-files data options)
+        compose-path (str parent-name "/docker-compose.yml")
+        compose-api-content (compose-api-proj (names api) options)]
+     (apply ->files data files)
+     (spit compose-path compose-api-content :append true)))
+
+(defn create-site+api
+  [parent-name options]
+  (binding [*force?* true]
+    (do
+      (create-site parent-name options true)
+      (create-api parent-name options))))
+
+(defn create-projects
+  [name template-type options summary]
+  (case template-type
+    "api" (create-api name options)
+    "site" (create-site name options)
+    "site+api" (create-site+api name options)
+    (exit 1 (usage summary)))
+
+  (spit (str name "/docker-compose.yml") (compose-deps options) :append true))
 
 (defn life
-  ([name] (life name "--help"))
-  ([name & args]
-   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
-     (cond
-       (:help options) (exit 0 (usage summary))
-       (not= (count arguments) 1) (exit 1 (usage summary))
-       errors (exit 1 (error-msg errors)))
-   
-     (case (first arguments)
-       "api" (do
-               (create-api name (:api options) options)
-               (spit (str name "/docker-compose.yml") (compose-api-proj (names (:api options)) options) :append true)
-               (spit (str name "/docker-compose.yml") (compose-deps options) :append true))
-       "site" (do
-                (create-site name (:site options) options)
-                (spit (str name "/docker-compose.yml") (compose-site-proj (names (:site options)) options) :append true)
-                (spit (str name "/docker-compose.yml") (compose-deps options) :append true))
-       "site+api" (binding [*force?* true]
-                    (do
-                      (create-site name (:site options) options)
-                      (spit (str name "/docker-compose.yml") (compose-site-proj (merge (names (:site options)) {:api-docker-name (:api options)}) options) :append true)
-                      (create-api name (:api options) options)
-                      (spit (str name "/docker-compose.yml") (compose-api-proj (names (:api options)) options) :append true)
-                      (spit (str name "/docker-compose.yml") (compose-deps options) :append true)))
-       (exit 1 (usage summary))))))
+  [name & args]
+  (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
+        template-type (first arguments)]
+    (cond
+      (:help options) (exit 0 (usage summary))
+      (not= (count arguments) 1) (exit 1 (usage summary))
+      errors (exit 1 (error-msg errors)))
+  
+    (create-projects name template-type options summary)))
