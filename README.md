@@ -15,7 +15,7 @@ Rents is a Leiningen template to give your project a better environment and chan
 
 
 # Usage
-[![Build Status](https://snap-ci.com/garycrawford/lein-rents/branch/master/build_image)](https://snap-ci.com/garycrawford/lein-rents/branch/master)
+[![Build Status](https://snap-ci.com/garycrawford/lein-life/branch/master/build_image)](https://snap-ci.com/garycrawford/lein-life/branch/master)
 
 You can use this template by executing:
 
