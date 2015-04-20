@@ -3,13 +3,13 @@
 <img src="https://raw.githubusercontent.com/garycrawford/lein-rents/master/images/binary_renton.png"
 alt="Binary Renton" title="Renton from Trainspotting" align="right" />
 
-> We start off with high hopes, then we bottle it. We realise
+> _We start off with high hopes, then we bottle it. We realise
 > that we’re all going to die, without really finding out the
 > big answers. We develop all those long-winded ideas which just
 > interpret the reality of our lives in different ways, without
 > really extending our body of worthwhile knowledge, about the big
 > things, the real things. Basically, we live a short disappointing life;
-> and then we die.
+> and then we die._
 > - Mark Renton, Trainspotting by Irvine Welsh
 
 Rents is a Leiningen template to give your project a better environment and chance in life than Mark Renton! It utilises Docker to give you a production like environment running locally on your dev machine where things like metrics and logging now become first class citizens of you dev lifecycle.
