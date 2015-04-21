@@ -17,6 +17,12 @@ Rents is a Leiningen template to give your project a better environment and chan
 # Usage
 [![Build Status](https://snap-ci.com/garycrawford/lein-life/branch/master/build_image)](https://snap-ci.com/garycrawford/lein-life/branch/master)
 
+_Caveat - heavy development underway... functionality being added rapidly and changes made regularly._
+
+## Dependencies
+To use Life generated projects to their full potential in a dev environment you will need to install Docker and Docker Compose.
+
+## Creating projects
 You can use this template by executing:
 
     $ lein new life <project-name> <type> [options]
@@ -38,3 +44,34 @@ You can then launch the igenerated app or site by executing:
     $ cd <project-name>
     $ docker-compose up
 
+## Working with a Life generated project
+### Get REPL to api or site
+
+    ;; site
+    $ lein repl :connect 192.168.59.103:21212
+    
+    ;; api
+    $ lein repl :connect 192.168.59.103:31313
+    
+### Enable autotest
+
+    ;; enabling autotest in repl will rerun tests when chnages are saved
+    user=> (autotest)
+    
+### Start site or API
+
+    ;; start the API or site
+    user=> (go)
+    
+    ;; refresh changes you have made
+    user=> (reset)
+    
+    ;; stop the API or site
+    user=> (stop)
+    
+### Viewing metrics
+Browse to http://192.168.59.103. So far this is only tested on a Mac using boot2docker. As long as you have started your 'site' (see above) metrics should start to populate.
+
+N.B. boot2docker has a clock skew issue - if you cannot see metrics you should try running the following command on the host:
+
+    $ boot2docker ssh sudo ntpclient -s -h pool.ntp.org
