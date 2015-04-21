@@ -44,6 +44,10 @@ You can then launch the igenerated app or site by executing:
     $ cd <project-name>
     $ docker-compose up
 
+I find that the Text Triumvirate (zsh, vim & tmux) gives me everything I need for effective Clojure development with Life (see my setup below) however templates should be compatible with the IDE & shell combo of your choice.
+
+<img src="https://raw.githubusercontent.com/garycrawford/lein-life/master/images/IDE.png" alt="Tmux and Vim" title="Tmux and Vim for Clojure development" />
+
 ## Working with a Life generated project
 ### Get REPL to api or site
 
@@ -70,6 +74,9 @@ You can then launch the igenerated app or site by executing:
     user=> (stop)
     
 ### Viewing metrics
+
+<img src="https://raw.githubusercontent.com/garycrawford/lein-life/master/images/stats.png" alt="Grafana stats" title="Screenshot of Grafana stats" />
+
 Browse to http://192.168.59.103. So far this is only tested on a Mac using boot2docker. As long as you have started your 'site' (see above) metrics should start to populate.
 
 N.B. boot2docker has a clock skew issue - if you cannot see metrics you should try running the following command on the host:
