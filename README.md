@@ -50,6 +50,7 @@ I find that the Text Triumvirate (zsh, vim & tmux) gives me everything I need fo
 
 ## Working with a Life generated project
 ### Get REPL to api or site
+When you connect to a REPL in a Life project the REPL is actually running inside a Docker containe, so you have to do a remote connection to it:
 
     ;; site
     $ lein repl :connect 192.168.59.103:21212
