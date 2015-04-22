@@ -3,7 +3,8 @@
             [clojure.tools.cli :refer  [parse-opts]]
             [leiningen.new.api :refer [api-files]]
             [leiningen.new.site :refer [site-files]]
-            [clojure.string :as string]))
+            [clojure.string :as string]
+            [clostache.parser :refer [render]]))
 
 (defn construct-template
   [lines]
@@ -16,8 +17,15 @@
 (def always (constantly true))
 (def mongodb? (partial = :mongodb))
 
+(defn api-vals
+  [ns-name]
+  {:ns-name ns-name
+   :path (string/replace ns-name "-" "_")
+   :docker-name (string/replace ns-name "-" "")
+   :dockerised-svr (str (->PascalCase ns-name) "DevSvr")})
+
 (defn dev-profile
-  [ns-name dockerised-svr {:keys [db]}]
+  [ns-name {:keys [db]}]
   (let [template (-> ["{:dev {:source-paths [\"dev\"]"                                                                            always
                       "       :plugins [[lein-ancient \"0.6.3\"]"                                                                 always
                       "                 [jonase/eastwood \"0.2.1\"]"                                                              always
@@ -35,12 +43,12 @@
                       "                      [kerodon \"0.5.0\"]]"                                                                always
                       "       :env {:metrics-host \"192.168.59.103\""                                                             always
                       "             :metrics-port 2003"                                                                           always
-                      "             :mongodb-uri  \"mongodb://192.168.59.103/%1$s\""                                              #(mongodb? db)
-                      "             :app-name     \"%1$s\""                                                                       always
-                      "             :hostname     \"%2$s\"}"                                                                      always
+                      "             :mongodb-uri  \"mongodb://192.168.59.103/{{path}}\""                                          #(mongodb? db)
+                      "             :app-name     \"{{ns-name}}\""                                                                always
+                      "             :hostname     \"{{dockerised-svr}}\"}"                                                        always
                       "       :ring {:stacktrace-middleware prone.middleware/wrap-exceptions}}}"                                  always]
                      construct-template)]
-    (format template ns-name dockerised-svr)))
+    (render template (api-vals ns-name))))
 
 (defn project-deps
   [{:keys [db]}]
@@ -123,12 +131,11 @@
        (string/join \newline)))
 
 (defn api-var-map
-  [ns-name docker-name dockerised-svr options]
+  [ns-name options]
   {:healthcheck-list-template (healthcheck-list-template)
    :page-template (page-template)
    :system-ns (system-ns-str ns-name options)
    :system-comp-list (system-comp-list-str options)
    :system-dep-graph (system-dep-graph ns-name options)
    :project-deps (project-deps options)
-   ;:docker-compose (docker-compose docker-name dockerised-svr ns-name options)
-   :dev-profile (dev-profile ns-name dockerised-svr options)})
+   :dev-profile (dev-profile ns-name options)})

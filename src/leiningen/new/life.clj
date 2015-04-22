@@ -1,10 +1,10 @@
 (ns leiningen.new.life
   (:use [leiningen.new.templates :only [renderer name-to-path sanitize-ns ->files]])
-  (:require [camel-snake-kebab.core :refer [->PascalCase]]
-            [clojure.tools.cli :refer  [parse-opts]]
+  (:require [clojure.tools.cli :refer  [parse-opts]]
             [leiningen.new.api :refer [api-files]]
             [leiningen.new.site :refer [site-files]]
             [clojure.string :as string]
+            [camel-snake-kebab.core :refer [->PascalCase]]
             [leiningen.new.common-api-templates :refer [api-var-map]]
             [leiningen.new.common-site-templates :refer [site-var-map]]
             [leiningen.new.templates :refer  [*force?*]]
@@ -48,64 +48,35 @@
   (println msg)
   (System/exit status))
 
-(defn template-data
-  [project-name ns-name var-map-fn options]
-  (let [sanitized-ns-name (sanitize-ns ns-name)
-        docker-name (string/replace project-name #"-" "")
-        dockerised-svr (str (->PascalCase (sanitize-ns project-name)) "DevSvr")]
-    (merge {:name project-name
-            :ns-name sanitized-ns-name
-            :year (str (.get (java.util.Calendar/getInstance) java.util.Calendar/YEAR))
-            :name-template "{{name}}"
-            :location-template "{{location}}"
-            :anti-forgery-field "{{{anti-forgery-field}}}"
-            :title-template "{{title}}"
-            :dockerised-svr dockerised-svr
-            :project-root (str (:name options) "/")
-            :docker-site-name (string/replace (:site options) #"-" "")
-            :docker-api-name (string/replace (:api options) #"-" "")
-            :sanitized-site (name-to-path (:site options))
-            :sanitized-api  (name-to-path (:api options))}
-          (var-map-fn sanitized-ns-name docker-name dockerised-svr options))))
-
 (defn site-template-data
   [project-name ns-name options]
-  (let [sanitized-ns-name (sanitize-ns ns-name)
-        docker-name (string/replace sanitized-ns-name #"-" "")
-        dockerised-svr (str (->PascalCase sanitized-ns-name) "DevSvr")]
+  (let [sanitized-ns-name (sanitize-ns ns-name)]
     (merge {:name project-name
             :ns-name sanitized-ns-name
             :year (str (.get (java.util.Calendar/getInstance) java.util.Calendar/YEAR))
-            :dockerised-svr dockerised-svr
             :project-root (str project-name "/")
-            :docker-site-name (string/replace ns-name #"-" "")
             :sanitized-site (name-to-path ns-name)
+            :dockerised-svr (str (->PascalCase ns-name) "DevSvr")
             :name-template "{{name}}"
             :location-template "{{location}}"
             :anti-forgery-field "{{{anti-forgery-field}}}"
             :title-template "{{title}}"}
-          (site-var-map sanitized-ns-name docker-name dockerised-svr options))))
+          (site-var-map sanitized-ns-name options))))
 
 (defn names
   [ns-name]
-  (let [sanitized-name (sanitize-ns ns-name)]
-    {:docker-name (string/replace sanitized-name #"-" "")
-     :ns-name sanitized-name
-     :dockerised-svr (str (->PascalCase sanitized-name) "DevSvr")}))
+  {:ns-name (sanitize-ns ns-name)})
 
 (defn api-template-data
   [project-name ns-name options]
-  (let [sanitized-name (sanitize-ns ns-name)
-        docker-name (string/replace sanitized-name #"-" "")
-        dockerised-svr (str (->PascalCase sanitized-name) "DevSvr")]
+  (let [sanitized-ns-name (sanitize-ns ns-name)]
     (merge {:name project-name
-            :ns-name sanitized-name
+            :ns-name sanitized-ns-name
             :year (str (.get (java.util.Calendar/getInstance) java.util.Calendar/YEAR))
-            :dockerised-svr dockerised-svr
             :project-root (str project-name "/")
-            :docker-api-name (string/replace ns-name #"-" "")
+            :dockerised-svr (str (->PascalCase ns-name) "DevSvr")
             :sanitized-api  (name-to-path ns-name)}
-          (api-var-map sanitized-name docker-name dockerised-svr options))))
+          (api-var-map sanitized-ns-name options))))
 
 (defn create-site
   ([parent-name options] (create-site parent-name options nil))
@@ -113,7 +84,7 @@
    (let [data (site-template-data parent-name site options)
          files (site-files data options)
          compose-path (str parent-name "/docker-compose.yml")
-         compose-site-content (compose-site-proj (merge (names site) (when add-api-dep? {:api-docker-name api})) options)]
+         compose-site-content (compose-site-proj (merge (names site) (when add-api-dep? {:api-name (sanitize-ns api)})) options)]
       (apply ->files data files)
       (spit compose-path compose-site-content :append true))))
 

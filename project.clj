@@ -9,7 +9,8 @@
                  [midje "1.6.3"]
                  [org.clojure/test.check "0.7.0"]
                  [com.gfredericks/test.chuck "0.1.16"]
-                 [kerodon "0.5.0"]]
+                 [kerodon "0.5.0"]
+                 [de.ubercode.clostache/clostache "1.4.0"]]
   :scm {:name "git"
         :url "https://github.com/garycrawford/lein-life"}
   :plugins [[lein-shell "0.4.0"]]

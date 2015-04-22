@@ -1,6 +1,7 @@
 (ns leiningen.new.common-templates
-  (:require [clojure.string :as string])
-  )
+  (:require [clojure.string :as string]
+            [camel-snake-kebab.core :refer [->PascalCase]]
+            [clostache.parser :refer [render]]))
 
 (defn construct-template
   [lines]
@@ -14,52 +15,63 @@
 (def mongodb? (partial = :mongodb))
 (def not-nil? (complement nil?))
 
+(defn site-vals
+  [{:keys [ns-name api-name]}]
+  (merge {:ns-name ns-name
+          :path (string/replace ns-name "-" "_")
+          :docker-name (string/replace ns-name "-" "")
+          :dockerised-svr (str (->PascalCase ns-name) "DevSvr")}
+         (when api-name 
+          {:api-docker-name (string/replace api-name "-" "")})))
+
 (defn compose-api-proj
-  [{:keys [docker-name dockerised-svr ns-name] :as this} {:keys [db]}]
-  (let [template (-> ["%1s:"                                                     always
-                      "  build: ./%3$s"                                          always
+  [this {:keys [db]}]
+  (let [vals (site-vals this)
+        template (-> ["{{docker-name}}:"                                         always
+                      "  build: ./{{path}}"                                      always
                       "  ports:"                                                 always
                       "   - \"4321:1234\""                                       always
                       "   - \"31313:31313\""                                     always
                       "  volumes:"                                               always
-                      "   - ./%3$s:/usr/src/app"                                 always
+                      "   - ./{{path}}:/usr/src/app"                             always
                       "  links:"                                                 always
                       "   - metrics"                                             always
                       "   - db"                                                  #(mongodb? db)
-                      "  hostname: \"%2s\""                                      always
+                      "  hostname: \"{{dockerised-svr}}\""                       always
                       "  environment:"                                           always
-                      "     MONGODB_URI: mongodb://192.168.59.103/%3$s"          #(mongodb? db)
+                      "     MONGODB_URI: mongodb://192.168.59.103/{{path}}"      #(mongodb? db)
                       "     METRICS_HOST: 192.168.59.103"                        always
                       "     METRICS_PORT: 2003"                                  always
-                      "     APP_NAME: %3$s"                                      always
+                      "     APP_NAME: {{ns-name}}"                               always
                       "  command: lein repl :headless :host 0.0.0.0 :port 31313" always
                       ""                                                         always]
                      construct-template)]
-    (format template docker-name dockerised-svr ns-name)))
+    (render template vals)))
 
 (defn compose-site-proj
-  [{:keys [docker-name dockerised-svr ns-name api-docker-name] :as this} {:keys [db]}]
-  (let [template (-> ["%1s:"                                                     always
-                      "  build: ./%3$s"                                          always
+  [{:keys [api-name] :as this} {:keys [db]}]
+  (let [vals (site-vals this)
+        template (-> ["{{docker-name}}:"                                         always
+                      "  build: ./{{path}}"                                      always
                       "  ports:"                                                 always
                       "   - \"1234:1234\""                                       always
                       "   - \"21212:21212\""                                     always
                       "  volumes:"                                               always
-                      "   - ./%3$s:/usr/src/app"                                 always
+                      "   - ./{{path}}:/usr/src/app"                             always
                       "  links:"                                                 always
-                      (str "   - " api-docker-name)                              #(not-nil? api-docker-name)
+                      "   - {{api-docker-name}}"                                 #(not-nil? api-name)
                       "   - metrics"                                             always
                       "   - db"                                                  #(mongodb? db)
-                      "  hostname: \"%2s\""                                      always
+                      "  hostname: \"{{dockerised-svr}}\""                       always
                       "  environment:"                                           always
-                      "     MONGODB_URI: mongodb://192.168.59.103/%3$s"          #(mongodb? db)
+                      "     MONGODB_URI: mongodb://192.168.59.103/{{path}}"      #(mongodb? db)
                       "     METRICS_HOST: 192.168.59.103"                        always
                       "     METRICS_PORT: 2003"                                  always
-                      "     APP_NAME: %3$s"                                      always
+                      "     APP_NAME: {{ns-name}}"                               always
                       "  command: lein repl :headless :host 0.0.0.0 :port 21212" always
                       ""                                                         always]
                      construct-template)]
-    (format template docker-name dockerised-svr ns-name)))
+    (render template vals)))
 
 (defn compose-deps
   [{:keys [db]}]
@@ -73,5 +85,6 @@
        "db:"                                                      #(mongodb? db)
        "   image: mongo:3.0.1"                                    #(mongodb? db)
        "   ports:"                                                #(mongodb? db)
-       "   - \"27017:27017\""                                     #(mongodb? db)]
+       "   - \"27017:27017\""                                     #(mongodb? db)
+       "   command: --smallfiles"                                 #(mongodb? db)]
       construct-template))
