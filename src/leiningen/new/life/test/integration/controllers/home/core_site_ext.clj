@@ -15,5 +15,5 @@
         (visit "/")
         (has (status? 200))) => anything
     (provided
-        (find-one-by-query {:db ..db..} "visitors" {}) => {:name     "Anonomous User"
-                                                           :location "Timbuktu"})))
+        (find-one-by-query {:db ..db..} "people" {}) => {:name     "Anonomous User"
+                                                         :location "Timbuktu"})))

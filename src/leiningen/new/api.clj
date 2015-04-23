@@ -9,9 +9,8 @@
                  ["{{sanitized-api}}/src/{{sanitized-api}}/components/mongodb/core.clj" (render "src/components/mongodb/core.clj" data)])
                (when (= db :mongodb)
                  ["{{sanitized-api}}/src/{{sanitized-api}}/components/mongodb/lifecycle.clj" (render "src/components/mongodb/lifecycle.clj" data)])
-               (if (= db :mongodb)
-                 ["{{sanitized-api}}/src/{{sanitized-api}}/components/jetty/lifecycle.clj" (render "src/components/jetty/lifecycle_api_ext.clj" data)]
-                 ["{{sanitized-api}}/src/{{sanitized-api}}/components/jetty/lifecycle.clj" (render "src/components/jetty/lifecycle_api_int.clj" data)])
+               (when (= db :mongodb)
+                 ["{{sanitized-api}}/src/{{sanitized-api}}/components/jetty/lifecycle.clj" (render "src/components/jetty/lifecycle_api_ext.clj" data)])
                ["{{sanitized-api}}/src/{{sanitized-api}}/components/graphite/lifecycle.clj" (render "src/components/graphite/lifecycle.clj" data)]
                ["{{sanitized-api}}/src/{{sanitized-api}}/components/system.clj" (render "src/components/system.clj" data)]]]
     (remove nil? files)))
@@ -21,9 +20,8 @@
   (let [files
         [(when (= db :mongodb)
            ["{{sanitized-api}}/src/{{sanitized-api}}/controllers/people/lifecycle.clj" (render "src/controllers/people/lifecycle.clj" data)])
-         (if (= db :mongodb)
-           ["{{sanitized-api}}/src/{{sanitized-api}}/controllers/people/core.clj" (render "src/controllers/people/core_api_ext.clj" data)]
-           ["{{sanitized-api}}/src/{{sanitized-api}}/controllers/people/core.clj" (render "src/controllers/people/core_api_int.clj" data)])
+         (when (= db :mongodb)
+           ["{{sanitized-api}}/src/{{sanitized-api}}/controllers/people/core.clj" (render "src/controllers/people/core_api_ext.clj" data)])
          ["{{sanitized-api}}/src/{{sanitized-api}}/controllers/api/core.clj" (render "src/controllers/api/core.clj" data)]
          ["{{sanitized-api}}/src/{{sanitized-api}}/controllers/healthcheck/lifecycle.clj" (render "src/controllers/healthcheck/lifecycle.clj" data)]
          ["{{sanitized-api}}/src/{{sanitized-api}}/controllers/healthcheck/core.clj" (render "src/controllers/healthcheck/core_api.clj" data)]]]

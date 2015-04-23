@@ -9,9 +9,8 @@
                  ["{{sanitized-site}}/src/{{sanitized-site}}/components/mongodb/core.clj" (render "src/components/mongodb/core.clj" data)])
                (when (= db :mongodb)
                  ["{{sanitized-site}}/src/{{sanitized-site}}/components/mongodb/lifecycle.clj" (render "src/components/mongodb/lifecycle.clj" data)])
-               (if (= db :mongodb)
-                 ["{{sanitized-site}}/src/{{sanitized-site}}/components/jetty/lifecycle.clj" (render "src/components/jetty/lifecycle_site_ext.clj" data)]
-                 ["{{sanitized-site}}/src/{{sanitized-site}}/components/jetty/lifecycle.clj" (render "src/components/jetty/lifecycle_site_int.clj" data)])
+               (when (= db :mongodb)
+                 ["{{sanitized-site}}/src/{{sanitized-site}}/components/jetty/lifecycle.clj" (render "src/components/jetty/lifecycle_site_ext.clj" data)])
                ["{{sanitized-site}}/src/{{sanitized-site}}/components/system.clj" (render "src/components/system.clj" data)]
                ["{{sanitized-site}}/src/{{sanitized-site}}/components/graphite/lifecycle.clj" (render "src/components/graphite/lifecycle.clj" data)]]]
     (remove nil? files)))
@@ -21,17 +20,15 @@
   (let [files
         [(when (= db :mongodb)
            ["{{sanitized-site}}/src/{{sanitized-site}}/controllers/home/lifecycle.clj" (render "src/controllers/home/lifecycle.clj" data)])
-         (if (= db :mongodb)
-           ["{{sanitized-site}}/src/{{sanitized-site}}/controllers/home/core.clj" (render "src/controllers/home/core_site_ext.clj" data)]
-           ["{{sanitized-site}}/src/{{sanitized-site}}/controllers/home/core.clj" (render "src/controllers/home/core_site_int.clj" data)])
+         (when (= db :mongodb)
+           ["{{sanitized-site}}/src/{{sanitized-site}}/controllers/home/core.clj" (render "src/controllers/home/core_site_ext.clj" data)])
          ["{{sanitized-site}}/src/{{sanitized-site}}/controllers/healthcheck/lifecycle.clj" (render "src/controllers/healthcheck/lifecycle.clj" data)]
          ["{{sanitized-site}}/src/{{sanitized-site}}/controllers/healthcheck/core.clj" (render "src/controllers/healthcheck/core_site.clj" data)]]]
     (remove nil? files)))
 
 (defn models-files
   [data]
-  [["{{sanitized-site}}/src/{{sanitized-site}}/models/home.clj" (render "src/models/home.clj" data)]
-   ["{{sanitized-site}}/src/{{sanitized-site}}/models/healthcheck.clj" (render "src/models/healthcheck.clj" data)]])
+  [["{{sanitized-site}}/src/{{sanitized-site}}/models/healthcheck.clj" (render "src/models/healthcheck.clj" data)]])
 
 (defn views-files
   [data]
@@ -59,12 +56,10 @@
   (let [files
         [(when (= db :mongodb)
            ["{{sanitized-site}}/test/{{sanitized-site}}/unit/components/mongodb/core.clj" (render "test/unit/components/mongodb/core.clj" data)])
-         (if (= db :mongodb)
-           ["{{sanitized-site}}/test/{{sanitized-site}}/integration/controllers/home/core.clj" (render "test/integration/controllers/home/core_site_ext.clj" data)]
-           ["{{sanitized-site}}/test/{{sanitized-site}}/integration/controllers/home/core.clj" (render "test/integration/controllers/home/core_site_int.clj" data)])
-         (if (= db :mongodb)
-           ["{{sanitized-site}}/test/{{sanitized-site}}/unit/controllers/home/core.clj" (render "test/unit/controllers/home/core_site_ext.clj" data)]
-           ["{{sanitized-site}}/test/{{sanitized-site}}/unit/controllers/home/core.clj" (render "test/unit/controllers/home/core_site_int.clj" data)])
+         (when (= db :mongodb)
+           ["{{sanitized-site}}/test/{{sanitized-site}}/integration/controllers/home/core.clj" (render "test/integration/controllers/home/core_site_ext.clj" data)])
+         (when (= db :mongodb)
+           ["{{sanitized-site}}/test/{{sanitized-site}}/unit/controllers/home/core.clj" (render "test/unit/controllers/home/core_site_ext.clj" data)])
          ["{{sanitized-site}}/test/{{sanitized-site}}/unit/components/graphite/lifecycle.clj" (render "test/unit/components/graphite/lifecycle.clj" data)]
          ["{{sanitized-site}}/test/{{sanitized-site}}/unit/controllers/healthcheck/core.clj" (render "test/unit/controllers/healthcheck/core.clj" data)]]]
     (remove nil? files)))

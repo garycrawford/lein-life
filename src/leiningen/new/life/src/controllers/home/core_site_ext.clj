@@ -7,7 +7,7 @@
 
 (defn index-get
   [{:keys [mongodb]}]
-  (if-let [db-model (find-one-by-query mongodb "visitors" {})]
+  (if-let [db-model (find-one-by-query mongodb "people" {})]
     (model-view-ok {:model (select-keys db-model [:name :location])
                     :view  (home-view "welcome")})   
     (model-view-ok {:model {:anti-forgery-field (anti-forgery-field)}
@@ -15,5 +15,5 @@
 
 (defn index-post
   [{:keys [mongodb]} {:keys [name location]}]
-  (insert mongodb "visitors" {:name name :location location})
+  (insert mongodb "people" {:name name :location location})
   (redirect-after-post "/"))
