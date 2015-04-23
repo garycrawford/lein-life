@@ -16,8 +16,9 @@
 (def not-nil? (complement nil?))
 
 (defn site-vals
-  [{:keys [ns-name api-name]}]
-  (merge {:ns-name ns-name
+  [{:keys [parent-name ns-name api-name]}]
+  (merge {:db-name (string/replace parent-name "-" "_")
+          :ns-name ns-name
           :path (string/replace ns-name "-" "_")
           :docker-name (string/replace ns-name "-" "")
           :dockerised-svr (str (->PascalCase ns-name) "DevSvr")}
@@ -39,7 +40,7 @@
                       "   - db"                                                  #(mongodb? db)
                       "  hostname: \"{{dockerised-svr}}\""                       always
                       "  environment:"                                           always
-                      "     MONGODB_URI: mongodb://192.168.59.103/{{path}}"      #(mongodb? db)
+                      "     MONGODB_URI: mongodb://192.168.59.103/{{db-name}}"   #(mongodb? db)
                       "     METRICS_HOST: 192.168.59.103"                        always
                       "     METRICS_PORT: 2003"                                  always
                       "     APP_NAME: {{ns-name}}"                               always
@@ -64,7 +65,7 @@
                       "   - db"                                                  #(mongodb? db)
                       "  hostname: \"{{dockerised-svr}}\""                       always
                       "  environment:"                                           always
-                      "     MONGODB_URI: mongodb://192.168.59.103/{{path}}"      #(mongodb? db)
+                      "     MONGODB_URI: mongodb://192.168.59.103/{{db-name}}"   #(mongodb? db)
                       "     METRICS_HOST: 192.168.59.103"                        always
                       "     METRICS_PORT: 2003"                                  always
                       "     APP_NAME: {{ns-name}}"                               always

@@ -64,8 +64,9 @@
           (site-var-map sanitized-ns-name options))))
 
 (defn names
-  [ns-name]
-  {:ns-name (sanitize-ns ns-name)})
+  [parent-name ns-name](string/replace ns-name "-" "_")
+  {:parent-name parent-name
+   :ns-name (sanitize-ns ns-name)})
 
 (defn api-template-data
   [project-name ns-name options]
@@ -84,7 +85,7 @@
    (let [data (site-template-data parent-name site options)
          files (site-files data options)
          compose-path (str parent-name "/docker-compose.yml")
-         compose-site-content (compose-site-proj (merge (names site) (when add-api-dep? {:api-name (sanitize-ns api)})) options)]
+         compose-site-content (compose-site-proj (merge (names parent-name site) (when add-api-dep? {:api-name (sanitize-ns api)})) options)]
       (apply ->files data files)
       (spit compose-path compose-site-content :append true))))
 
@@ -93,7 +94,7 @@
   (let [data (api-template-data parent-name api options)
         files (api-files data options)
         compose-path (str parent-name "/docker-compose.yml")
-        compose-api-content (compose-api-proj (names api) options)]
+        compose-api-content (compose-api-proj (names parent-name api) options)]
      (apply ->files data files)
      (spit compose-path compose-api-content :append true)))
 
