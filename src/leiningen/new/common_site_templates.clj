@@ -132,10 +132,44 @@
         "{{>footer}}"]
        (string/join \newline)))
 
+(defn person-list
+  []
+  (->> ["<ul>"
+        "{{#people}}"
+        "    <li>{{name}}, {{location}}</li>"
+        "{{/people}}"
+        "</ul>"]
+       (string/join \newline)))
+
+(defn add-person
+  []
+  (->> ["<form method=\"POST\">"
+        "  {{{anti-forgery-field}}}"
+        "  First name:<br>"
+        "  <input type=\"text\" name=\"name\">"
+        "  <br>"
+        "  Location:<br>"
+        "  <input type=\"text\" name=\"location\">"
+        "  <input type=\"submit\" value=\"Submit\">"
+        "</form>"]
+       (string/join \newline)))
+
+(defn introduction
+  []
+  (->> ["<h1>Care to add yourself to the list of people...?</h1>"
+        ""
+        "{{>add-person}}"
+        ""
+        "{{>person-list}}"]
+       (string/join \newline)))
+
 (defn site-var-map
   [ns-name options]
   {:healthcheck-list-template (healthcheck-list-template)
    :page-template (page-template)
+   :add-person (add-person)
+   :person-list (person-list)
+   :introduction (introduction)
    :system-ns (system-ns-str ns-name options)
    :system-comp-list (system-comp-list-str options)
    :system-dep-graph (system-dep-graph ns-name options)

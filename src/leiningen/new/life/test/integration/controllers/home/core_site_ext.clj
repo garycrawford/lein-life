@@ -4,7 +4,7 @@
             [kerodon.test :refer [has status?]]
             [metrics.core :refer [new-registry]]
             [{{ns-name}}.components.jetty.lifecycle :refer [create-handler]]
-            [{{ns-name}}.components.mongodb.core :refer [find-one-by-query]]))
+            [{{ns-name}}.components.mongodb.core :refer [find-by-query]]))
 
 (def app (partial create-handler (new-registry)))
 
@@ -15,5 +15,5 @@
         (visit "/")
         (has (status? 200))) => anything
     (provided
-        (find-one-by-query {:db ..db..} "people" {}) => {:name     "Anonomous User"
-                                                         :location "Timbuktu"})))
+        (find-by-query {:db ..db..} "people" {}) => [{:name     "Anonomous User"
+                                                      :location "Timbuktu"}])))

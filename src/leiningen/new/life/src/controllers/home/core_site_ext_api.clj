@@ -13,12 +13,10 @@
 (defn index-get
   []
   (let [response (client/get "http://192.168.59.103:4321/api/people")
-        db-model (parse-response response)]
-    (if (not-empty db-model)
-      (model-view-ok {:model (select-keys (first db-model) [:name :location])
-                      :view  (home-view "welcome")})   
-      (model-view-ok {:model {:anti-forgery-field (anti-forgery-field)}
-                      :view  (home-view "introduction")}))))
+        people (parse-response response)]
+      (model-view-ok {:model {:anti-forgery-field (anti-forgery-field)
+                              :people people}
+                      :view  (home-view "introduction")})))
 
 (defn index-post
   [{:keys [name location]}]

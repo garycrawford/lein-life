@@ -15,11 +15,13 @@
     (let [actual-content-type (get headers "Content-Type")]
       (= actual-content-type expected-content-type))))
 
-(def response {:name     "Anonomous User"
-               :location "Timbuktu"})
+(defn build-response
+  [& persons]
+  {:body (encode {:result persons})})
 
-(def api-list-people-response {:body (encode {:result [response]})})
-(def api-list-no-people-response {:body (encode {:result []})})
+(def api-list-people-response (build-response {:name     "Anonomous User"
+                                               :location "Timbuktu"}))
+(def api-list-no-people-response (build-response))
 
 (facts "for each call to index"
     (fact "the response has a 200 status code"
@@ -34,13 +36,8 @@
   
     (fact "the response model is well formed"
       (let [response (index-get)]
-        (get-in response [:body :model])) => response 
-      (provided
-        (client/get "http://192.168.59.103:4321/api/people") => api-list-people-response))
-  
-    (fact "the correct view is returned for a return visitor"
-      (let [response (index-get)]
-        (get-in response [:body :view :path])) => "templates/home/welcome.mustache"
+        (get-in response [:body :model])) => (contains {:people [{:name     "Anonomous User"
+                                                                  :location "Timbuktu"}]})
       (provided
         (client/get "http://192.168.59.103:4321/api/people") => api-list-people-response))
   
