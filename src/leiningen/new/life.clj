@@ -45,7 +45,6 @@
        (string/join \newline errors)))
 
 (defn exit [status msg]
-  (println msg)
   (System/exit status))
 
 (defn site-template-data
@@ -82,10 +81,14 @@
 (defn create-site
   ([parent-name options] (create-site parent-name options nil))
   ([parent-name {:keys [site api] :as options} add-api-dep?]
-   (let [data (site-template-data parent-name site options)
-         files (site-files data options)
+   (let [opts (merge options (when add-api-dep? {:db :api}))
+         data (site-template-data parent-name site opts)
+         files (site-files data opts)
          compose-path (str parent-name "/docker-compose.yml")
-         compose-site-content (compose-site-proj (merge (names parent-name site) (when add-api-dep? {:api-name (sanitize-ns api)})) options)]
+         compose-site-content (compose-site-proj
+                                (merge (names parent-name site)
+                                       (when add-api-dep? {:api-name (sanitize-ns api)}))
+                                opts)]
       (apply ->files data files)
       (spit compose-path compose-site-content :append true))))
 

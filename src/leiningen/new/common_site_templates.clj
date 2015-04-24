@@ -16,6 +16,7 @@
 
 (def always (constantly true))
 (def mongodb? (partial = :mongodb))
+(def api? (partial = :api))
 
 (defn site-vals
   [ns-name]
@@ -51,7 +52,7 @@
     (render template (site-vals ns-name))))
 
 (defn project-deps
-  [{:keys [db]}]
+  [{:keys [db] :as v}]
   (-> [" :dependencies [[org.clojure/clojure \"1.6.0\"]"                                        always
        "                [ring/ring-jetty-adapter \"1.3.2\"]"                                    always
        "                [ring/ring-json \"0.3.1\"]"                                             always
@@ -67,6 +68,7 @@
        "                [com.taoensso/timbre \"3.4.0\" :exclusions [org.clojure/tools.reader]]" always
        "                [prismatic/schema \"0.4.0\"]"                                           always
        "                [robert/hooke \"1.3.0\"]"                                               always
+       "                [clj-http \"1.1.1\"]"                                                   #(api? db)
        "                [com.novemberain/monger \"2.1.0\"]"                                     #(mongodb? db)
        "                [jstrutz/hashids \"1.0.1\"]"                                            #(mongodb? db)
        "                [de.ubercode.clostache/clostache \"1.4.0\"]]"                           always]

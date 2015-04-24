@@ -3,11 +3,16 @@
             [kerodon.core :refer [session visit]]
             [kerodon.test :refer [has status?]]
             [metrics.core :refer [new-registry]]
-            [{{ns-name}}.components.jetty.lifecycle :refer [create-handler]]
-            [{{ns-name}}.components.mongodb.core :refer [find-one-by-query]]))
+            [clj-http.client :as client]
+            [cheshire.core :refer [encode]]
+            [{{ns-name}}.components.jetty.lifecycle :refer [create-handler]]))
 
 (def app (partial create-handler (new-registry)))
-(def collection "people")
+
+(def response {:name     "Anonomous User"
+               :location "Timbuktu"})
+
+(def api-list-people-response {:body (encode {:result [response]})})
 
 (facts "for each call to index"
   (fact "the response has a 200 status code"
@@ -16,5 +21,4 @@
         (visit "/")
         (has (status? 200))) => anything
     (provided
-        (find-one-by-query {:db ..db..} collection {}) => {:name     "Anonomous User"
-                                                           :location "Timbuktu"})))
+        (client/get "http://192.168.59.103:4321/api/people") => api-list-people-response)))
