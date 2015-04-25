@@ -16,6 +16,8 @@
   [{:keys [home]}]
   {:home-get    (fn [_] (home-ctlr/index-get home))
    :home-post   (fn [{:keys [params]}] (home-ctlr/index-post home params))
+   :person-get    (fn [{:keys [params]}] (home-ctlr/person-get home params))
+   :person-post    (fn [{:keys [params]}] (home-ctlr/person-post home params))
    :healthcheck (fn [_] (healthcheck/index))})
 
 (def routes (scenic/load-routes-from-file "routes.txt"))

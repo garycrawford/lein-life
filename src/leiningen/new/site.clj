@@ -42,6 +42,7 @@
   [data]
   [["{{sanitized-site}}/resources/templates/home/introduction.mustache" (render "resources/templates/home/introduction.mustache" data)]
    ["{{sanitized-site}}/resources/templates/home/add-person.mustache" (render "resources/templates/home/add-person.mustache" data)]
+   ["{{sanitized-site}}/resources/templates/home/update-person.mustache" (render "resources/templates/home/update-person.mustache" data)]
    ["{{sanitized-site}}/resources/templates/home/person-list.mustache" (render "resources/templates/home/person-list.mustache" data)]
    ["{{sanitized-site}}/resources/templates/healthcheck/healthcheck-list.mustache" (render "resources/templates/healthcheck/healthcheck-list.mustache" data)]
    ["{{sanitized-site}}/resources/templates/shared/default.mustache" (render "resources/templates/shared/default.mustache" data)]

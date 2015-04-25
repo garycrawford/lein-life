@@ -136,7 +136,7 @@
   []
   (->> ["<ul>"
         "{{#people}}"
-        "    <li>{{name}}, {{location}}</li>"
+        "    <li>{{name}}, {{location}} <a href=\"http://192.168.59.103:1234/person/{{id}}\">edit</a> </li>"
         "{{/people}}"
         "</ul>"]
        (string/join \newline)))
@@ -154,6 +154,20 @@
         "</form>"]
        (string/join \newline)))
 
+(defn update-person
+  []
+  (->> ["<form method=\"POST\">"
+        "  {{{anti-forgery-field}}}"
+        "  <input type=\"hidden\" name=\"id\" value=\"{{id}}\">"
+        "  First name:<br>"
+        "  <input type=\"text\" name=\"name\" value=\"{{name}}\">"
+        "  <br>"
+        "  Location:<br>"
+        "  <input type=\"text\" name=\"location\" value=\"{{location}}\">"
+        "  <input type=\"submit\" value=\"Edit\">"
+        "</form>"]
+       (string/join \newline)))
+
 (defn introduction
   []
   (->> ["<h1>Care to add yourself to the list of people...?</h1>"
@@ -168,6 +182,7 @@
   {:healthcheck-list-template (healthcheck-list-template)
    :page-template (page-template)
    :add-person (add-person)
+   :update-person (update-person)
    :person-list (person-list)
    :introduction (introduction)
    :system-ns (system-ns-str ns-name options)

@@ -1,3 +1,5 @@
 GET  /            home-get
 POST /            home-post
+GET  /person/:id  person-get
+POST /person/:id  person-post
 GET  /healthcheck healthcheck
