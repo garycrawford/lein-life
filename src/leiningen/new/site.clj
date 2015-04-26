@@ -16,6 +16,12 @@
                ["{{sanitized-site}}/src/{{sanitized-site}}/components/graphite/lifecycle.clj" (render "src/components/graphite/lifecycle.clj" data)]]]
     (remove nil? files)))
 
+(defn platform-files
+  [data {:keys [db]}]
+  (let [files [(when (= db :api)
+                 ["{{sanitized-site}}/src/{{sanitized-site}}/platform/people_api/core.clj" (render "src/platform/people_api/core.clj" data)])]]
+    (remove nil? files)))
+
 (defn controllers-files
   [data {:keys [db]}]
   (let [files
@@ -106,4 +112,5 @@
           (views-files data)
           (models-files data)
           (templates-files data)
-          (component-files data args)))
+          (component-files data args)
+          (platform-files data args)))

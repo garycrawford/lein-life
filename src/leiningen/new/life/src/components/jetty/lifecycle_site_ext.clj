@@ -15,7 +15,7 @@
 (defn routes-map
   [{:keys [home]}]
   {:home               (fn [_] (home-ctlr/home home))
-   :create-person      (fn [{:keys [params]}] (home-ctlr/create-person home params))
+   :create-person-post (fn [{:keys [params]}] (home-ctlr/create-person-post home params))
    :update-person-get  (fn [{:keys [params]}] (home-ctlr/update-person-get home params))
    :update-person-post (fn [{:keys [params]}] (home-ctlr/update-person-post home params))
    :delete-person-get  (fn [{:keys [params]}] (home-ctlr/delete-person-get home params))

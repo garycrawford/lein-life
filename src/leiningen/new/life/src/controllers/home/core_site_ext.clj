@@ -3,7 +3,7 @@
             [{{ns-name}}.responses :refer [model-view-ok]]
             [{{ns-name}}.components.mongodb.core :refer [find-by-query find-by-id insert update delete]]
             [ring.util.anti-forgery :refer [anti-forgery-field]]
-            [ring.util.response :refer [redirect-after-post]]))
+            [ring.util.response :refer [redirect-after-post not-found]]))
 
 (defn person:m->vm
   "Converts a person model into a person view-model"
@@ -21,6 +21,15 @@
   (merge model
          {:anti-forgery-field (anti-forgery-field)}))
 
+(defn person-response
+  "Builds a response based on the named template
+   and the person data associated with the id"
+  [{:keys [mongodb]} {:keys [id]} template]
+  (let [person (find-by-id mongodb "people" id)
+        view-model (person:m->vm person)]
+    (model-view-ok {:model (add-anti-forgery view-model)
+                    :view  (home-view template)})))
+
 (defn home
   [{:keys [mongodb]}]
   (let [people (find-by-query mongodb "people" {})
@@ -28,17 +37,14 @@
     (model-view-ok {:model (add-anti-forgery view-model)
                     :view  (home-view "introduction")})))
 
-(defn create-person
+(defn create-person-post
   [{:keys [mongodb]} {:keys [name location]}]
   (insert mongodb "people" {:name name :location location})
   (redirect-after-post "/"))
 
 (defn update-person-get
-  [{:keys [mongodb]} {:keys [id]}]
-  (let [model (find-by-id mongodb "people" id)
-        view-model (person:m->vm model)]
-    (model-view-ok {:model (add-anti-forgery view-model)
-                    :view  (home-view "update-person")})))
+  [component params]
+  (person-response component params "update-person"))
 
 (defn update-person-post
   [{:keys [mongodb]} {:keys [id name location]}]
@@ -46,11 +52,8 @@
   (redirect-after-post "/"))
 
 (defn delete-person-get
-  [{:keys [mongodb]} {:keys [id]}]
-  (let [model (find-by-id mongodb "people" id)
-        view-model (person:m->vm model)]
-    (model-view-ok {:model (add-anti-forgery view-model)
-                    :view  (home-view "delete-person")})))
+  [component params]
+  (person-response component params "delete-person"))
 
 (defn delete-person-post
   [{:keys [mongodb]} {:keys [id]}]
