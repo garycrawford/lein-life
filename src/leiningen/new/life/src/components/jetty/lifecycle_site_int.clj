@@ -18,11 +18,20 @@
                  :update-person-post (fn [{:keys [params]}] (home-ctlr/update-person-post params))
                  :delete-person-get  (fn [{:keys [params]}] (home-ctlr/delete-person-get params))
                  :delete-person-post (fn [{:keys [params]}] (home-ctlr/delete-person-post params))
-                 :healthcheck (fn [_] (healthcheck/index))})
+                 :healthcheck        (fn [_] (healthcheck/index))})
 
 (def routes (scenic/load-routes-from-file "routes.txt"))
 
 (def jetty-config {:port 1234 :join? false})
+
+(defn wrap-exception
+  [handler]
+  (fn [{:keys [request-method uri remote-addr] :as request}]
+    (try (handler request)
+      (catch Exception e
+        (info e request-method uri remote-addr)
+         {:status 500
+          :body "Sorry, something went wrong!"}))))
 
 (defn wrap-view-response
   [handler]
@@ -37,10 +46,11 @@
 (defn create-handler
   [metrics-registry]
   (-> (scenic/scenic-handler routes routes-map)
-      (wrap-view-response)
+      wrap-view-response
       (json-response/wrap-json-response)
       (wrap-defaults site-defaults)
-      (ring/instrument metrics-registry)))
+      (ring/instrument metrics-registry)
+      wrap-exception))
 
 (defn start
   [{:keys [metrics-registry server] :as this}]

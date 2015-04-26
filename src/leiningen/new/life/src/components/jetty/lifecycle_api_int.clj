@@ -13,17 +13,27 @@
             [{{ns-name}}.controllers.healthcheck.core :as healthcheck]
             [robert.hooke :refer  [prepend append]]))
 
-(def routes-map {:entry-point   (fn [_] (api/entry-point))
-                 :list-people   (fn [_] (people/list-people))
-                 :create-person (fn [{:keys [params]}] (people/create-person params))
-                 :read-person   (fn [{:keys [params]}] (people/read-person 1))
-                 :update-person (fn [{:keys [params]}] (people/update-person params))
-                 :delete-person (fn [{:keys [params]}] (people/delete-person 1))
-                 :healthcheck   (fn [_] (healthcheck/index))})
+(def routes-map {:entry-point-redirect (fn [_] (util/redirect "/api"))
+                 :entry-point          (fn [_] (api/entry-point))
+                 :list-people          (fn [_] (people/list-people))
+                 :create-person        (fn [{:keys [params]}] (people/create-person params))
+                 :read-person          (fn [{:keys [params]}] (people/read-person 1))
+                 :update-person        (fn [{:keys [params]}] (people/update-person params))
+                 :delete-person        (fn [{:keys [params]}] (people/delete-person 1))
+                 :healthcheck          (fn [_] (healthcheck/index))})
 
 (def routes (scenic/load-routes-from-file "routes.txt"))
 
 (def jetty-config {:port 1234 :join? false})
+
+(defn wrap-exception
+  [handler]
+  (fn [{:keys [request-method uri remote-addr] :as request}]
+    (try (handler request)
+      (catch Exception e
+        (info e request-method uri remote-addr)
+         {:status 500
+          :body "Sorry, something went wrong!"}))))
 
 (defn wrap-view-response
   [handler]
@@ -38,10 +48,11 @@
 (defn create-handler
   [metrics-registry]
   (-> (scenic/scenic-handler routes routes-map)
-      (wrap-view-response)
+      wrap-view-response
       (json-response/wrap-json-response)
       (wrap-defaults api-defaults)
-      (ring/instrument metrics-registry)))
+      (ring/instrument metrics-registry)
+      wrap-exception))
 
 (defn start
   [{:keys [metrics-registry server] :as this}]
