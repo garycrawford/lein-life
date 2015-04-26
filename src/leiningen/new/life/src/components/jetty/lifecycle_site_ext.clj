@@ -14,10 +14,12 @@
 
 (defn routes-map
   [{:keys [home]}]
-  {:home-get    (fn [_] (home-ctlr/index-get home))
-   :home-post   (fn [{:keys [params]}] (home-ctlr/index-post home params))
-   :person-get    (fn [{:keys [params]}] (home-ctlr/person-get home params))
-   :person-post    (fn [{:keys [params]}] (home-ctlr/person-post home params))
+  {:home               (fn [_] (home-ctlr/home home))
+   :create-person      (fn [{:keys [params]}] (home-ctlr/create-person home params))
+   :update-person-get  (fn [{:keys [params]}] (home-ctlr/update-person-get home params))
+   :update-person-post (fn [{:keys [params]}] (home-ctlr/update-person-post home params))
+   :delete-person-get  (fn [{:keys [params]}] (home-ctlr/delete-person-get home params))
+   :delete-person-post (fn [{:keys [params]}] (home-ctlr/delete-person-post home params))
    :healthcheck (fn [_] (healthcheck/index))})
 
 (def routes (scenic/load-routes-from-file "routes.txt"))

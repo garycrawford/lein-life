@@ -23,30 +23,30 @@
   (let [mongo-component {:db ..db..}
         home-component {:mongodb mongo-component}]
     (fact "the response has a 200 status code"
-      (index-get home-component) => (status? 200)
+      (home home-component) => (status? 200)
       (provided
         (find-by-query mongo-component collection {}) => response))
   
     (fact "the response has a text/html content type"
-      (index-get home-component) => (content-type? "text/html")
+      (home home-component) => (content-type? "text/html")
       (provided
         (find-by-query mongo-component collection {}) => response))
   
     (fact "the response model is well formed"
-      (let [response (index-get home-component)]
+      (let [response (home home-component)]
         (get-in response [:body :model])) => (contains {:people [{:name     "Anonomous User"
                                                                   :location "Timbuktu"}]})
       (provided
         (find-by-query mongo-component collection {}) => response))
   
     (fact "the correct view is returned for a first time visitor"
-      (let [response (index-get home-component)]
+      (let [response (home home-component)]
         (get-in response [:body :view :path])) => "templates/home/introduction.mustache"
       (provided
         (find-by-query mongo-component collection {}) => nil))
 
     (fact "a view function is returned"
-      (let [response (index-get home-component)]
+      (let [response (home home-component)]
         (get-in response [:body :view :fn])) => fn?
       (provided
         (find-by-query mongo-component collection {}) => response))))

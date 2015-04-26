@@ -13,10 +13,6 @@
             [{{ns-name}}.controllers.healthcheck.core :as healthcheck]
             [robert.hooke :refer  [prepend append]]))
 
-; (def routes-map {:home-get    (fn [_] (home/index-get))
-;                  :home-post   (fn [{:keys [params]}] (home/index-post params))
-;                  :healthcheck (fn [_] (healthcheck/index))})
-
 (def routes-map {:entry-point   (fn [_] (api/entry-point))
                  :list-people   (fn [_] (people/list-people))
                  :create-person (fn [{:keys [params]}] (people/create-person params))

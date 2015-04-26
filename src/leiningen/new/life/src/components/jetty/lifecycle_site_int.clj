@@ -12,10 +12,12 @@
             [{{ns-name}}.controllers.healthcheck.core :as healthcheck]
             [robert.hooke :refer  [prepend append]]))
 
-(def routes-map {:home-get    (fn [_] (home-ctlr/index-get))
-                 :home-post   (fn [{:keys [params]}] (home-ctlr/index-post params))
-                 :person-get  (fn [{:keys [params]}] (home-ctlr/person-get params))
-                 :person-post (fn [{:keys [params]}] (home-ctlr/person-post params))
+(def routes-map {:home          (fn [_] (home-ctlr/home))
+                 :create-person (fn [{:keys [params]}] (home-ctlr/create-person params))
+                 :update-person-get  (fn [{:keys [params]}] (home-ctlr/update-person-get params))
+                 :update-person-post (fn [{:keys [params]}] (home-ctlr/update-person-post params))
+                 :delete-person-get  (fn [{:keys [params]}] (home-ctlr/delete-person-get params))
+                 :delete-person-post (fn [{:keys [params]}] (home-ctlr/delete-person-post params))
                  :healthcheck (fn [_] (healthcheck/index))})
 
 (def routes (scenic/load-routes-from-file "routes.txt"))

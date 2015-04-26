@@ -136,19 +136,22 @@
   []
   (->> ["<ul>"
         "{{#people}}"
-        "    <li>{{name}}, {{location}} <a href=\"http://192.168.59.103:1234/person/{{id}}\">edit</a> </li>"
+        "    <li>{{name}},"
+        "        {{location}}"
+        "        <a href=\"http://192.168.59.103:1234/person/{{id}}/update\">edit</a>"
+        "        <a href=\"http://192.168.59.103:1234/person/{{id}}/delete\">delete</a>"
+        "    </li>"
         "{{/people}}"
         "</ul>"]
        (string/join \newline)))
 
 (defn add-person
   []
-  (->> ["<form method=\"POST\">"
+  (->> ["<form action=\"person\" method=\"POST\">"
         "  {{{anti-forgery-field}}}"
         "  First name:<br>"
         "  <input type=\"text\" name=\"name\">"
-        "  <br>"
-        "  Location:<br>"
+        "  <br>" "  Location:<br>"
         "  <input type=\"text\" name=\"location\">"
         "  <input type=\"submit\" value=\"Submit\">"
         "</form>"]
@@ -168,6 +171,16 @@
         "</form>"]
        (string/join \newline)))
 
+(defn delete-person
+  []
+  (->> ["<form method=\"POST\">"
+        "  {{{anti-forgery-field}}}"
+        "  <input type=\"hidden\" name=\"id\" value=\"{{id}}\">"
+        "  Are you sure you want to delete {{name}}, {{location}}?<br>"
+        "  <input type=\"submit\" value=\"Yes\">"
+        "</form>"]
+       (string/join \newline)))
+
 (defn introduction
   []
   (->> ["<h1>Care to add yourself to the list of people...?</h1>"
@@ -183,6 +196,7 @@
    :page-template (page-template)
    :add-person (add-person)
    :update-person (update-person)
+   :delete-person (delete-person)
    :person-list (person-list)
    :introduction (introduction)
    :system-ns (system-ns-str ns-name options)
