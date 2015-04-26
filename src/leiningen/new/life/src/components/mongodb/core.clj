@@ -2,10 +2,11 @@
   (:require [monger.collection :as mc]
             [monger.operators :refer [$inc $exists]]
             [monger.conversion :refer [to-object-id]]
-            [taoensso.timbre :refer [info]]
+            [taoensso.timbre :refer [info warn]]
             [robert.hooke :refer [prepend append]]
             [hashids.core :refer [encode-hex decode-hex]]
-            [clojure.core.incubator :refer [dissoc-in]]))
+            [clojure.core.incubator :refer [dissoc-in]]
+            [dire.core :refer [with-handler!]]))
 
 (def hashids-opts {:salt "this is my salt"})
 
@@ -18,6 +19,11 @@
   (let [[left-long right-long] (decode-hex hashids-opts external-id)]
     (to-object-id
       (apply str left-long right-long))))
+
+(with-handler! #'external->mongoid
+  "Here's an optional docstring about the handler."
+  java.lang.IllegalArgumentException
+  (fn [e & args] (warn "illegal mongoid provided" args)))
 
 (defn externalise
   [doc]
@@ -69,10 +75,10 @@
 
 (defn update
   [{:keys [db]} collection {:keys [id] :as doc}]
-  (let [_id (external->mongoid id)
-        old-versioned-doc (mc/find-map-by-id db collection _id)
-        new-versioned-doc (update-versioned-doc old-versioned-doc doc)]
-    (mc/update-by-id db collection _id new-versioned-doc)))
+  (when-let [_id (external->mongoid id)]
+    (let [old-versioned-doc (mc/find-map-by-id db collection _id)
+          new-versioned-doc (update-versioned-doc old-versioned-doc doc)]
+      (mc/update-by-id db collection _id new-versioned-doc))))
 
 (defn delete
   [mongodb collection id]

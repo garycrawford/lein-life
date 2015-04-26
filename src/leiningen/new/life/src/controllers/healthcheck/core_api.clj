@@ -1,5 +1,5 @@
 (ns {{ns-name}}.controllers.healthcheck.core
-  (:require [{{ns-name}}.responses :refer [model-view-ok]]
+  (:require [{{ns-name}}.responses :refer [model-view-200]]
             [clostache.parser :refer [render-resource]]))
 
 (def healthcheck-path (partial format "templates/healthcheck/%s.mustache"))
@@ -25,5 +25,5 @@
 
 (defn index
   []
-  (model-view-ok {:model (healthcheck-list-model)
-                  :view  (healthcheck-view "healthcheck-list")}))
+  (model-view-200 {:model (healthcheck-list-model)
+                   :view  (healthcheck-view "healthcheck-list")}))

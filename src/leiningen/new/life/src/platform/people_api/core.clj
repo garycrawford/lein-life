@@ -1,6 +1,8 @@
 (ns {{ns-name}}.platform.people-api.core
   (:require [clj-http.client :as client]
-            [cheshire.core :refer [decode]]))
+            [taoensso.timbre :refer [info]]
+            [cheshire.core :refer [decode]]
+            [dire.core :refer [with-handler!]]))
 
 (defn parse-people-list-response
   "Extracts the result of an http response containing a people list and converts into a clojure data structure"
@@ -33,6 +35,10 @@
       person-by-id-uri
       client/get
       parse-person-response))
+
+(with-handler! #'get-person
+  [:status 404]
+  (fn [e & args] (info "Person with id doesn't exist" args)))
 
 (defn update-person
   [{:keys [id] :as person}]

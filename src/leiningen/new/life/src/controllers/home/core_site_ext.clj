@@ -1,9 +1,9 @@
 (ns {{ns-name}}.controllers.home.core
   (:require [{{ns-name}}.views.home :refer [home-view]]
-            [{{ns-name}}.responses :refer [model-view-ok]]
+            [{{ns-name}}.responses :refer [model-view-200 model-view-404]]
             [{{ns-name}}.components.mongodb.core :refer [find-by-query find-by-id insert update delete]]
             [ring.util.anti-forgery :refer [anti-forgery-field]]
-            [ring.util.response :refer [redirect-after-post not-found]]))
+            [ring.util.response :refer [redirect-after-post]]))
 
 (defn person:m->vm
   "Converts a person model into a person view-model"
@@ -25,17 +25,18 @@
   "Builds a response based on the named template
    and the person data associated with the id"
   [{:keys [mongodb]} {:keys [id]} template]
-  (let [person (find-by-id mongodb "people" id)
-        view-model (person:m->vm person)]
-    (model-view-ok {:model (add-anti-forgery view-model)
-                    :view  (home-view template)})))
+  (if-let [person (find-by-id mongodb "people" id)]
+    (model-view-200 {:model (add-anti-forgery (person:m->vm person))
+                     :view  (home-view template)})
+    (model-view-404 {:model {}
+                     :view  (home-view "not-found")})))
 
 (defn home
   [{:keys [mongodb]}]
   (let [people (find-by-query mongodb "people" {})
         view-model (people-list:m->vm people)]
-    (model-view-ok {:model (add-anti-forgery view-model)
-                    :view  (home-view "introduction")})))
+    (model-view-200 {:model (add-anti-forgery view-model)
+                     :view  (home-view "introduction")})))
 
 (defn create-person-post
   [{:keys [mongodb]} {:keys [name location]}]

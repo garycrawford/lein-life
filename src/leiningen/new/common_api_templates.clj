@@ -69,6 +69,7 @@
        "                [robert/hooke \"1.3.0\"]"                                               always
        "                [com.novemberain/monger \"2.1.0\"]"                                     #(mongodb? db)
        "                [jstrutz/hashids \"1.0.1\"]"                                            #(mongodb? db)
+       "                [dire \"0.5.3\"]"                                                       always
        "                [de.ubercode.clostache/clostache \"1.4.0\"]]"                           always]
       construct-template))
 

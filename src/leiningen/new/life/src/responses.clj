@@ -1,10 +1,18 @@
 (ns {{ns-name}}.responses)
 
-(defn model-view-ok
-  [body]
-  {:status 200
+(defn model-view-response
+  [body status-code]
+  {:status status-code
    :headers {"Content-Type" "text/html"}
    :body body})
+
+(defn model-view-404
+  [body]
+  (model-view-response body 404))
+
+(defn model-view-200
+  [body]
+  (model-view-response body 200))
 
 (defn json-ok
   [body]
