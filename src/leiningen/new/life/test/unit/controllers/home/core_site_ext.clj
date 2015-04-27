@@ -19,33 +19,33 @@
 (def response [{:name     "Anonomous User"
                 :location "Timbuktu"}])
 
-(facts "for each call to index"
+(facts "the home function response map"
   (let [mongo-component {:db ..db..}
         home-component {:mongodb mongo-component}]
-    (fact "the response has a 200 status code"
+    (fact "contains a 200 status code"
       (home home-component) => (status? 200)
       (provided
         (find-by-query mongo-component collection {}) => response))
   
-    (fact "the response has a text/html content type"
+    (fact "contains a text/html content type"
       (home home-component) => (content-type? "text/html")
       (provided
         (find-by-query mongo-component collection {}) => response))
   
-    (fact "the response model is well formed"
+    (fact "contains a view model containing people list data for the view"
       (let [response (home home-component)]
         (get-in response [:body :model])) => (contains {:people [{:name     "Anonomous User"
                                                                   :location "Timbuktu"}]})
       (provided
         (find-by-query mongo-component collection {}) => response))
   
-    (fact "the correct view is returned for a first time visitor"
+    (fact "contains a path to the view template to be rendered"
       (let [response (home home-component)]
         (get-in response [:body :view :path])) => "templates/home/introduction.mustache"
       (provided
         (find-by-query mongo-component collection {}) => nil))
 
-    (fact "a view function is returned"
+    (fact "contains a view function which renders the view with the view model data"
       (let [response (home home-component)]
         (get-in response [:body :view :fn])) => fn?
       (provided
