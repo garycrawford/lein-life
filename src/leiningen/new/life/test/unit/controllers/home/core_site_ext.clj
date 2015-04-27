@@ -16,8 +16,8 @@
     (let [actual-content-type (get headers "Content-Type")]
       (= actual-content-type expected-content-type))))
 
-(def response [{:name     "Anonomous User"
-                :location "Timbuktu"}])
+(def people [{:name     "Anonomous User"
+              :location "Timbuktu"}])
 
 (facts "the home function response map"
   (let [mongo-component {:db ..db..}
@@ -25,28 +25,27 @@
     (fact "contains a 200 status code"
       (home home-component) => (status? 200)
       (provided
-        (find-by-query mongo-component collection {}) => response))
+        (find-by-query mongo-component collection {}) => people))
   
     (fact "contains a text/html content type"
       (home home-component) => (content-type? "text/html")
       (provided
-        (find-by-query mongo-component collection {}) => response))
+        (find-by-query mongo-component collection {}) => people))
   
     (fact "contains a view model containing people list data for the view"
       (let [response (home home-component)]
-        (get-in response [:body :model])) => (contains {:people [{:name     "Anonomous User"
-                                                                  :location "Timbuktu"}]})
+        (get-in response [:body :model])) => (contains {:people people})
       (provided
-        (find-by-query mongo-component collection {}) => response))
+        (find-by-query mongo-component collection {}) => people))
   
     (fact "contains a path to the view template to be rendered"
       (let [response (home home-component)]
         (get-in response [:body :view :path])) => "templates/home/introduction.mustache"
       (provided
-        (find-by-query mongo-component collection {}) => nil))
+        (find-by-query mongo-component collection {}) => people))
 
     (fact "contains a view function which renders the view with the view model data"
       (let [response (home home-component)]
         (get-in response [:body :view :fn])) => fn?
       (provided
-        (find-by-query mongo-component collection {}) => response))))
+        (find-by-query mongo-component collection {}) => people))))
