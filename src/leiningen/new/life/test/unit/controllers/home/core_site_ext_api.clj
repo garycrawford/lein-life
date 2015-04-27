@@ -1,8 +1,7 @@
 (ns {{ns-name}}.unit.controllers.home.core
   (:require [midje.sweet :refer :all]
             [{{ns-name}}.controllers.home.core :refer :all]
-            [clj-http.client :as client]
-            [cheshire.core :refer [encode]]))
+            [{{ns-name}}.platform.people-api.core :refer [get-people]]))
 
 (defn status?
   [expected-status]
@@ -15,40 +14,33 @@
     (let [actual-content-type (get headers "Content-Type")]
       (= actual-content-type expected-content-type))))
 
-(defn build-response
-  [& persons]
-  {:body (encode {:result persons})})
-
-(def api-list-people-response (build-response {:name     "Anonomous User"
-                                               :location "Timbuktu"}))
-(def api-list-no-people-response (build-response))
+(def people [{:name "Anonomous User" :location "Timbuktu"}])
 
 (facts "for each call to index"
     (fact "the response has a 200 status code"
       (home) => (status? 200)
       (provided
-        (client/get "http://192.168.59.103:4321/api/people") => api-list-people-response))
+        (get-people) => people))
   
     (fact "the response has a text/html content type"
       (home) => (content-type? "text/html")
       (provided
-        (client/get "http://192.168.59.103:4321/api/people") => api-list-people-response))
+        (get-people) => people))
   
     (fact "the response model is well formed"
       (let [response (home)]
-        (get-in response [:body :model])) => (contains {:people [{:name     "Anonomous User"
-                                                                  :location "Timbuktu"}]})
+        (get-in response [:body :model])) => (contains {:people people})
       (provided
-        (client/get "http://192.168.59.103:4321/api/people") => api-list-people-response))
+        (get-people) => people))
   
     (fact "the correct view is returned for a first time visitor"
       (let [response (home)]
         (get-in response [:body :view :path])) => "templates/home/introduction.mustache"
       (provided
-        (client/get "http://192.168.59.103:4321/api/people") => api-list-no-people-response))
+        (get-people) => []))
 
     (fact "a view function is returned"
       (let [response (home)]
         (get-in response [:body :view :fn])) => fn?
       (provided
-        (client/get "http://192.168.59.103:4321/api/people") => api-list-people-response)))
+        (get-people) => people)))
