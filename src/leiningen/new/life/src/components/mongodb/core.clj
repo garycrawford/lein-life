@@ -75,10 +75,12 @@
 
 (defn update
   [{:keys [db]} collection {:keys [id] :as doc}]
-  (when-let [_id (external->mongoid id)]
+  (if-let [_id (external->mongoid id)]
     (let [old-versioned-doc (mc/find-map-by-id db collection _id)
-          new-versioned-doc (update-versioned-doc old-versioned-doc doc)]
-      (mc/update-by-id db collection _id new-versioned-doc))))
+          new-versioned-doc (update-versioned-doc old-versioned-doc doc)
+          result (mc/update-by-id db collection _id new-versioned-doc)]
+      {:count (.getN result)})
+    {:count 0}))
 
 (defn delete
   [mongodb collection id]

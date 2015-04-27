@@ -48,9 +48,13 @@
   (person-response component params "update-person"))
 
 (defn update-person-post
-  [{:keys [mongodb]} {:keys [id name location]}]
-  (update mongodb "people" {:id id :name name :location location})
-  (redirect-after-post "/"))
+  [{:keys [mongodb]} params] 
+  (let [person (select-keys params [:id :name :location])
+        {:keys [count]} (update mongodb "people" person)]
+    (if (pos? count)
+      (redirect-after-post "/")
+      (model-view-404 {:model {}
+                       :view (home-view "not-found")}))))
 
 (defn delete-person-get
   [component params]
@@ -58,5 +62,8 @@
 
 (defn delete-person-post
   [{:keys [mongodb]} {:keys [id]}]
-  (delete mongodb "people" id)
-  (redirect-after-post "/"))
+  (let [{:keys [count]} (delete mongodb "people" id)]
+    (if (pos? count)
+      (redirect-after-post "/")
+      (model-view-404 {:model {}
+                       :view (home-view "not-found")}))))
