@@ -40,7 +40,7 @@
              (provided
                (find-by-query mongo-component collection {}) => people))
 
-       (fact "contains a view model containing people list data for the view"
+       (fact "contains a view model populated with people"
              (let [response (home home-component)]
                (get-in response [:body :model])) => (contains {:people people})
                (provided
@@ -52,7 +52,7 @@
             (provided
               (find-by-query mongo-component collection {}) => people))
    
-       (fact "contains a view function which renders the view with the view model data"
+       (fact "contains a view function"
             (let [response (home home-component)]
               (get-in response [:body :view :fn])) => fn?
             (provided
@@ -60,17 +60,17 @@
 
 (facts "the update-person-get function response map"
        (facts "for users which exist"
-              (fact "contains a 200 status code when the person exists"
+              (fact "contains a 200 status code"
                     (update-person-get home-component {:id ..id..}) => (status? 200)
                     (provided
                       (find-by-id mongo-component collection ..id..) => person))
  
-              (fact "contains a text/html content type when 200"
+              (fact "contains a text/html content type"
                     (update-person-get home-component {:id ..id..}) => (content-type? "text/html")
                     (provided
                       (find-by-id mongo-component collection ..id..) => people))
 
-              (fact "contains a view model with person data when person exists"
+              (fact "contains a view model with person data"
                     (let [response (update-person-get home-component {:id ..id..})]
                       (get-in response [:body :model])) => (contains person)
                     (provided
@@ -82,30 +82,30 @@
                     (provided
                       (find-by-id mongo-component collection ..id..) => person))
 
-              (fact "contains a view function which renders the view with the view model data"
+              (fact "contains a view function"
                     (let [response (update-person-get home-component {:id ..id..})]
                       (get-in response [:body :view :fn])) => fn?
                     (provided
                       (find-by-id mongo-component collection ..id..) => person)))
 
        (facts "for users which don't exist"
-              (fact "contains a 404 status code when the person does not exist"
+              (fact "contains a 404 status code"
                     (update-person-get home-component {:id ..id..}) => (status? 404)
                     (provided
                       (find-by-id mongo-component collection ..id..) => nil))
 
-              (fact "contains a text/html content type when 404"
+              (fact "contains a text/html content type"
                     (update-person-get home-component {:id ..id..}) => (content-type? "text/html")
                     (provided
                       (find-by-id mongo-component collection ..id..) => nil))
 
-              (fact "contains an empty view model when person does not exist"
+              (fact "contains an empty view model"
                     (let [response (update-person-get home-component {:id ..id..})]
                       (get-in response [:body :model])) => {}
                     (provided
                       (find-by-id mongo-component collection ..id..) => nil))
 
-              (fact "contains a path to the not-found template when no person exists"
+              (fact "contains a path to the not-found template"
                     (let [response (update-person-get home-component {:id ..id..})]
                       (get-in response [:body :view :path])) => "templates/home/not-found.mustache"
                     (provided
@@ -113,17 +113,17 @@
 
 (facts "the delete-person-get function response map"
        (facts "for users which exist"
-              (fact "contains a 200 status code when the person exists"
+              (fact "contains a 200 status code"
                     (delete-person-get home-component {:id ..id..}) => (status? 200)
                     (provided
                       (find-by-id mongo-component collection ..id..) => person))
  
-              (fact "contains a text/html content type when 200"
+              (fact "contains a text/html content type"
                     (delete-person-get home-component {:id ..id..}) => (content-type? "text/html")
                     (provided
                       (find-by-id mongo-component collection ..id..) => people))
 
-              (fact "contains a view model with person data when person exists"
+              (fact "contains a view model with person data"
                     (let [response (delete-person-get home-component {:id ..id..})]
                       (get-in response [:body :model])) => (contains person)
                     (provided
@@ -135,30 +135,30 @@
                     (provided
                       (find-by-id mongo-component collection ..id..) => person))
 
-              (fact "contains a view function which renders the view with the view model data"
+              (fact "contains a view function"
                     (let [response (delete-person-get home-component {:id ..id..})]
                       (get-in response [:body :view :fn])) => fn?
                     (provided
                       (find-by-id mongo-component collection ..id..) => person)))
 
        (facts "for users which don't exist"
-              (fact "contains a 404 status code when the person does not exist"
+              (fact "contains a 404 status code"
                     (delete-person-get home-component {:id ..id..}) => (status? 404)
                     (provided
                       (find-by-id mongo-component collection ..id..) => nil))
 
-              (fact "contains a text/html content type when 404"
+              (fact "contains a text/html content type"
                     (delete-person-get home-component {:id ..id..}) => (content-type? "text/html")
                     (provided
                       (find-by-id mongo-component collection ..id..) => nil))
 
-              (fact "contains an empty view model when person does not exist"
+              (fact "contains an empty view model"
                     (let [response (delete-person-get home-component {:id ..id..})]
                       (get-in response [:body :model])) => {}
                     (provided
                       (find-by-id mongo-component collection ..id..) => nil))
 
-              (fact "contains a path to the not-found template when no person exists"
+              (fact "contains a path to the not-found template"
                     (let [response (delete-person-get home-component {:id ..id..})]
                       (get-in response [:body :view :path])) => "templates/home/not-found.mustache"
                     (provided
