@@ -79,9 +79,10 @@
     (let [old-versioned-doc (mc/find-map-by-id db collection _id)
           new-versioned-doc (update-versioned-doc old-versioned-doc doc)
           result (mc/update-by-id db collection _id new-versioned-doc)]
-      {:count (.getN result)})
-    {:count 0}))
+      {:updated true})
+    {:updated false}))
 
 (defn delete
   [mongodb collection id]
-  (update mongodb collection {:id id :deleted true}))
+  (let [{:keys [updated]} (update mongodb collection {:id id :deleted true})]
+    {:deleted updated}))

@@ -5,6 +5,10 @@
 
 (def collection "people")
 
+(defn person-uri
+  [id]
+  (str "http://192.168.59.103:4321/api/people/" id))
+
 (defn whitelist
   [person]
   (select-keys person [:name :location :id]))
@@ -17,7 +21,7 @@
 (defn create-person
   [{:keys [mongodb]} {:keys [name location]}]
   (let [{:keys [id]} (m/insert mongodb collection {:name name :location location})]
-    (-> (created (str "/api/people/" id))
+    (-> (created (person-uri id) {:result {:created true :id id}})
         (header "Content-Type" "application/json"))))
 
 (defn read-person
@@ -31,7 +35,7 @@
   (m/update mongodb collection {:name name :location location :id id})
   (-> (status {} 204)
       (header "Content-Type" "application/json")
-      (header "Location" (str "/api/people/" id))))
+      (header "Location" (person-uri id))))
 
 (defn delete-person
   [{:keys [mongodb]} id]

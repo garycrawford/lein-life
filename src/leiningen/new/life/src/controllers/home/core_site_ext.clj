@@ -50,8 +50,8 @@
 (defn update-person-post
   [{:keys [mongodb]} params] 
   (let [person (select-keys params [:id :name :location])
-        {:keys [count]} (update mongodb "people" person)]
-    (if (pos? count)
+        {:keys [updated]} (update mongodb "people" person)]
+    (if updated
       (redirect-after-post "/")
       (model-view-404 {:model {}
                        :view (home-view "not-found")}))))
@@ -62,8 +62,8 @@
 
 (defn delete-person-post
   [{:keys [mongodb]} {:keys [id]}]
-  (let [{:keys [count]} (delete mongodb "people" id)]
-    (if (pos? count)
+  (let [{:keys [deleted]} (delete mongodb "people" id)]
+    (if deleted
       (redirect-after-post "/")
       (model-view-404 {:model {}
                        :view (home-view "not-found")}))))

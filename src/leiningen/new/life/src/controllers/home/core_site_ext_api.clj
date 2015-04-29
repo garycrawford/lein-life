@@ -50,8 +50,8 @@
 (defn update-person-post
   [params] 
   (let [person (select-keys params [:id :name :location])
-        {:keys [count]} (update-person person)]
-    (if (pos? count)
+        {:keys [updated]} (update-person person)]
+    (if updated
       (redirect-after-post "/")
       (model-view-404 {:model {}
                        :view (home-view "not-found")}))))
@@ -62,8 +62,8 @@
 
 (defn delete-person-post
   [{:keys [id]}]
-  (let [{:keys [count]} (delete-person id)]
-    (if (pos? count)
+  (let [{:keys [deleted]} (delete-person id)]
+    (if deleted
       (redirect-after-post "/")
       (model-view-404 {:model {}
                        :view (home-view "not-found")}))))

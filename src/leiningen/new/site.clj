@@ -66,8 +66,10 @@
 (defn test-files
   [data {:keys [db]}]
   (let [files
-        [(when (= db :mongodb)
-           ["{{sanitized-site}}/test/{{sanitized-site}}/unit/components/mongodb/core.clj" (render "test/unit/components/mongodb/core.clj" data)])
+        [["{{sanitized-site}}/test/{{sanitized-site}}/checkers/core.clj" (render "test/checkers/core.clj" data)]
+         (if (= db :mongodb)
+           ["{{sanitized-site}}/test/{{sanitized-site}}/unit/components/mongodb/core.clj" (render "test/unit/components/mongodb/core.clj" data)]
+           ["{{sanitized-site}}/test/{{sanitized-site}}/unit/platform/people_api/core.clj" (render "test/unit/platform/people_api/core.clj" data)])
          (when (= db :mongodb)
            ["{{sanitized-site}}/test/{{sanitized-site}}/integration/controllers/home/core.clj" (render "test/integration/controllers/home/core_site_ext.clj" data)])
          (if (= db :mongodb)

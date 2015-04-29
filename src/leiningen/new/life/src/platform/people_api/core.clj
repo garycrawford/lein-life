@@ -4,48 +4,55 @@
             [cheshire.core :refer [decode]]
             [dire.core :refer [with-handler!]]))
 
-(defn parse-people-list-response
-  "Extracts the result of an http response containing a people list and converts into a clojure data structure"
-  [{:keys [body]}]
-  (get (decode body true) :result))
+(def people-uri "http://192.168.59.103:4321/api/people")
 
 (defn person-by-id-uri
   "Creates a URI to obtain person information from a person id"
   [id]
-  (str "http://192.168.59.103:4321/api/people/" id))
+  (str people-uri "/" id))
 
-(defn parse-person-response
-  "Extracts the result of an http response containing a single person and converts into a clojure data structure"
+(defn parse-response
+  "Parses the result of an http response as edn"
   [{:keys [body]}]
-  (get (decode body true) :result))
+  (-> body
+      (decode true)
+      :result))
 
 (defn get-people
   []
-  (-> "http://192.168.59.103:4321/api/people"
+  (-> people-uri
       client/get
-      parse-people-list-response))
+      parse-response))
 
 (defn create-person
   [person]
-  (client/post "http://192.168.59.103:4321/api/people" {:form-params person}))
+  (-> people-uri
+      (client/post {:form-params person})
+      parse-response))
 
 (defn get-person
   [id]
   (-> id
       person-by-id-uri
       client/get
-      parse-person-response))
+      parse-response))
+
+(defn update-person
+  [{:keys [id] :as person}]
+  (let [status (-> id
+                   person-by-id-uri
+                   (client/put {:form-params person})
+                   :status)]
+    (if (= status 204) {:updated true} {:updated false})))
+
+(defn delete-person
+  [id]
+  (let [status (-> id
+                   person-by-id-uri
+                   client/delete
+                   :status)]
+    (if (= status 204) {:deleted true} {:deleted false})))
 
 (with-handler! #'get-person
   [:status 404]
   (fn [e & args] (info "Person with id doesn't exist" args)))
-
-(defn update-person
-  [{:keys [id] :as person}]
-  (let [uri (person-by-id-uri id)]
-    (client/put uri {:form-params person})))
-
-(defn delete-person
-  [id]
-  (let [uri (person-by-id-uri id)]
-    (client/delete uri {:form-params {:id id}})))

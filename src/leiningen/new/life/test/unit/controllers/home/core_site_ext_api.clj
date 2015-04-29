@@ -1,25 +1,9 @@
 (ns {{ns-name}}.unit.controllers.home.core
   (:require [midje.sweet :refer :all]
             [{{ns-name}}.controllers.home.core :refer :all]
+            [{{ns-name}}.checkers.core :refer [status? content-type? location?]]
             [{{ns-name}}.platform.people-api.core :refer [get-person get-people update-person delete-person create-person]]
             [ring.util.response :refer [get-header]]))
-
-(defn location?
-  [expected-location]
-  (fn [response]
-    (let [actual-location (get-header response "Location")]
-      (= actual-location expected-location))))
-
-(defn status?
-  [expected-status]
-  (fn [{actual-status :status}]
-    (= actual-status expected-status)))
-
-(defn content-type?
-  [expected-content-type]
-  (fn [{headers :headers}]
-    (let [actual-content-type (get headers "Content-Type")]
-      (= actual-content-type expected-content-type))))
 
 (background (around :facts (let [person {:name "Anonomous User" :location "Timbuktu"}
                                  person-with-id (merge person {:id ..id..})
@@ -32,7 +16,7 @@
                (get-people) => people))
 
        (fact "contains a text/html content type"
-             (home) => (content-type? "text/html")
+             (home) => (content-type? "html")
              (provided
                (get-people) => people))
 
@@ -62,7 +46,7 @@
                       (get-person ..id..) => person))
  
               (fact "contains a text/html content type"
-                    (update-person-get {:id ..id..}) => (content-type? "text/html")
+                    (update-person-get {:id ..id..}) => (content-type? "html")
                     (provided
                       (get-person ..id..) => people))
 
@@ -91,7 +75,7 @@
                       (get-person ..id..) => nil))
 
               (fact "contains a text/html content type"
-                    (update-person-get {:id ..id..}) => (content-type? "text/html")
+                    (update-person-get {:id ..id..}) => (content-type? "html")
                     (provided
                       (get-person ..id..) => nil))
 
@@ -115,7 +99,7 @@
                       (get-person ..id..) => person))
  
               (fact "contains a text/html content type"
-                    (delete-person-get {:id ..id..}) => (content-type? "text/html")
+                    (delete-person-get {:id ..id..}) => (content-type? "html")
                     (provided
                       (get-person ..id..) => people))
 
@@ -144,7 +128,7 @@
                       (get-person ..id..) => nil))
 
               (fact "contains a text/html content type"
-                    (delete-person-get {:id ..id..}) => (content-type? "text/html")
+                    (delete-person-get {:id ..id..}) => (content-type? "html")
                     (provided
                       (get-person ..id..) => nil))
 
@@ -165,70 +149,70 @@
               (fact "contains a 303 status code"
                     (update-person-post person-with-id) => (status? 303)
                     (provided
-                      (update-person person-with-id) => {:count 1}))
+                      (update-person person-with-id) => {:updated true}))
  
               (fact "contains a '/' location header"
                     (update-person-post person-with-id) => (location? "/")
                     (provided
-                      (update-person person-with-id) => {:count 1})))
+                      (update-person person-with-id) => {:updated true})))
 
        (facts "for users which don't exist"
               (fact "contains a 404 status code"
                     (update-person-post person-with-id) => (status? 404)
                     (provided
-                      (update-person person-with-id) => {:count 0}))
+                      (update-person person-with-id) => {:updated false}))
 
               (fact "contains a text/html content"
-                    (update-person-post person-with-id) => (content-type? "text/html")
+                    (update-person-post person-with-id) => (content-type? "html")
                     (provided
-                      (update-person person-with-id) => {:count 0}))
+                      (update-person person-with-id) => {:updated false}))
 
               (fact "contains an empty view model"
                     (let [response (update-person-post person-with-id)]
                       (get-in response [:body :model])) => {}
                     (provided
-                      (update-person person-with-id) => {:count 0}))
+                      (update-person person-with-id) => {:updated false}))
 
               (fact "contains a path to the not-found template"
                     (let [response (update-person-post person-with-id)]
                       (get-in response [:body :view :path])) => "templates/home/not-found.mustache"
                     (provided
-                      (update-person person-with-id) => {:count 0}))))
+                      (update-person person-with-id) => {:updated false}))))
 
 (facts "the delete-person-post function response map"
        (facts "for users which exist"
               (fact "contains a 303 status code"
                     (delete-person-post {:id ..id..}) => (status? 303)
                     (provided
-                      (delete-person ..id..) => {:count 1}))
+                      (delete-person ..id..) => {:deleted true}))
  
               (fact "contains a '/' location header"
                     (delete-person-post {:id ..id..}) => (location? "/")
                     (provided
-                      (delete-person ..id..) => {:count 1})))
+                      (delete-person ..id..) => {:deleted true})))
 
        (facts "for users which don't exist"
               (fact "contains a 404 status code"
                     (delete-person-post {:id ..id..}) => (status? 404)
                     (provided
-                      (delete-person ..id..) => {:count 0}))
+                      (delete-person ..id..) => {:deleted false}))
 
               (fact "contains a text/html content"
-                    (delete-person-post {:id ..id..}) => (content-type? "text/html")
+                    (delete-person-post {:id ..id..}) => (content-type? "html")
                     (provided
-                      (delete-person ..id..) => {:count 0}))
+                      (delete-person ..id..) => {:deleted false}))
 
               (fact "contains an empty view model"
                     (let [response (delete-person-post {:id ..id..})]
                       (get-in response [:body :model])) => {}
                     (provided
-                      (delete-person ..id..) => {:count 0}))
+                      (delete-person ..id..) => {:deleted false}))
 
               (fact "contains a path to the not-found template"
                     (let [response (delete-person-post {:id ..id..})]
                       (get-in response [:body :view :path])) => "templates/home/not-found.mustache"
                     (provided
-                      (delete-person ..id..) => {:count 0}))))
+                      (delete-person ..id..) => {:deleted false}))))
 
 (facts "the create-person-post function response map"
        (fact "contains a 303 status code"

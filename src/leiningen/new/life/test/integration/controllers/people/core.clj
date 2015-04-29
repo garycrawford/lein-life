@@ -3,10 +3,12 @@
             [com.stuartsierra.component :as component]
             [metrics.core :refer [new-registry]]
             [ring.mock.request :as mock]
+            [ring.util.response :refer [get-header]]
             [{{ns-name}}.components.jetty.lifecycle :refer [create-handler]]
             [{{ns-name}}.components.mongodb.lifecycle :refer [new-mongodb]]
             [cheshire.core :refer [decode]]
-            [monger.db :refer [drop-db]]))
+            [monger.db :refer [drop-db]]
+            [clojure.string :refer [split]]))
 
 (def mongodb (new-mongodb))
 
@@ -23,90 +25,90 @@
 (against-background [(before :contents (setup)) (after :contents (teardown))]
   (facts "when listing people but no-one exists"
     (let [app (create-handler {:people {:mongodb mongodb}})
-          res (app (mock/request :get "/api/people"))]
+          res (app (mock/request :get "http://192.168.59.103:4321/api/people"))]
 
       (fact "response has a 200 status code"
           (:status res) => 200)
       
       (fact "response has application/json content type"
-          (get-in res [:headers "Content-Type"]) => "application/json")
+          (get-header res "Content-Type") => "application/json")
 
       (fact "response has an empty vector as a result"
           (decode (:body res)) => (contains {"result" []}))))
 
   (facts "when creating people"
     (let [app (create-handler {:people {:mongodb mongodb}})
-          res (app (mock/request :post "/api/people" {:name "gary" :location "home"}))]
+          res (app (mock/request :post "http://192.168.59.103:4321/api/people" {:name "gary" :location "home"}))]
 
       (fact "response has a 201 status code"
         (:status res) => 201)
       
       (fact "response has application/json content type"
-        (get-in res [:headers "Content-Type"]) => "application/json")
+        (get-header res "Content-Type") => "application/json")
 
       (fact "response has an empty vector as a result"
-        (get-in res [:headers "Location"]) => #(re-matches #"\/api\/people\/.*" %))))
+        (get-header res "Location") => #(re-matches #"http:\/\/192.168.59.103:4321\/api\/people\/.*" %))))
 
   (facts "when listing people and people exist"
     (let [app (create-handler {:people {:mongodb mongodb}})
-          res (app (mock/request :get "/api/people"))]
+          res (app (mock/request :get "http://192.168.59.103:4321/api/people"))]
 
       (fact "the response has a 200 status code"
         (:status res) => 200)
       
       (fact "the response has application/json content type"
-        (get-in res [:headers "Content-Type"]) => "application/json")
+        (get-header res "Content-Type") => "application/json")
 
       (fact "the response contains a result with a vector value"
           (decode (:body res)) => (contains {"result" (contains (contains {"location" "home" "name" "gary"}))}))))
 
   (facts "when reading people"
     (let [app (create-handler {:people {:mongodb mongodb}})
-          setup (app (mock/request :post "/api/people" {:name "erin" :location "garden"}))
-          path (get-in setup [:headers "Location"])
-          id (subs path 12)
-          res (app (mock/request :get path))]
+          setup-response (app (mock/request :post "http://192.168.59.103:4321/api/people" {:name "erin" :location "garden"}))
+          location-uri (get-header setup-response "Location")
+          id (last (split location-uri #"/"))
+          response (app (mock/request :get location-uri))]
       
       (fact "response has a 200 status code"
-        (:status res) => 200)
+        (:status response) => 200)
       
       (fact "response has application/json content type"
-        (get-in res [:headers "Content-Type"]) => "application/json")
+        (get-header response "Content-Type") => "application/json")
  
       (fact "response has user data"
-        (decode (:body res)) => {"result" {"id" id "location" "garden" "name" "erin"}})))
+        (decode (:body response) true) => {:result {:id id :location "garden" :name "erin"}})))
 
   (facts "when updating people"
     (let [app (create-handler {:people {:mongodb mongodb}})
-          setup (app (mock/request :post "/api/people" {:name "erin" :location "garden"}))
-          path (get-in setup [:headers "Location"])
-          id (subs path 12)
-          res (app (mock/request :put path {:location "table"}))]
+          setup-response (app (mock/request :post "http://192.168.59.103:4321/api/people" {:name "erin" :location "garden"}))
+          location-uri (get-header setup-response "Location")
+          id (last (split location-uri #"/"))
+          response (app (mock/request :put location-uri {:location "table"}))]
       
       (fact "response has a 204 status code"
-        (:status res) => 204)
+        (:status response) => 204)
       
       (fact "response has application/json content type"
-        (get-in res [:headers "Content-Type"]) => "application/json")
+        (get-header response "Content-Type") => "application/json")
      
       (fact "response contains a location header with pointer to the resurce"
-        (get-in res [:headers "Location"]) => #(re-matches #"\/api\/people\/.*" %))
+        (get-header response "Location") => #(re-matches #"http:\/\/192.168.59.103:4321\/api\/people\/.*" %))
      
      (fact "the updated data is available"
-       (decode (:body (app (mock/request :get path)))) => (contains {"result" (contains {"location" "table"})}))))
+       (decode (:body (app (mock/request :get location-uri))) true) => (contains {:result (contains {:location "table"})}))))
 
   (facts "when deleting people"
     (let [app (create-handler {:people {:mongodb mongodb}})
-          setup (app (mock/request :post "/api/people" {:name "erin" :location "garden"}))
-          path (get-in setup [:headers "Location"])
-          id (subs path 12)
-          res (app (mock/request :delete path))]
+          setup-response (app (mock/request :post "http://192.168.59.103:4321/api/people" {:name "erin" :location "garden"}))
+          location-uri (get-header setup-response "Location")
+          id (last (split location-uri #"/"))
+          response (app (mock/request :delete location-uri))]
       
       (fact "response has a 204 status code"
-        (:status res) => 204)
+        (:status response) => 204)
       
       (fact "response has application/json content type"
-        (get-in res [:headers "Content-Type"]) => "application/json")
+        (get-header response "Content-Type") => "application/json")
      
      (fact "the updated data is available"
-       (:status (app (mock/request :get path))) => 404))))
+       (:status (app (mock/request :get location-uri))) => 404))))
