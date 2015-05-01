@@ -10,7 +10,7 @@
             [monger.db :refer [drop-db]]
             [clojure.string :refer [split]]))
 
-(def mongodb (new-mongodb))
+(def mongodb (new-mongodb "people_integration_tests"))
 
 (defn setup
   []

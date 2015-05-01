@@ -7,11 +7,25 @@
             [robert.hooke :refer [prepend append]]
             [clojure.string :as string]))
 
+(defn update-db-name
+  [uri db-name]
+  (let [slash-index (.lastIndexOf uri "/")]
+    (-> uri
+        (subs 0 slash-index)
+        (str "/" db-name))))
+
+(defn mongo-uri
+  [{:keys [db-name]}]
+  (let [uri (env :mongodb-uri)]
+    (if (= db-name :from-config)
+      uri
+      (update-db-name uri db-name))))
+
 (defn start
   [{:keys [conn] :as this}]
   (if conn
     this
-    (let [uri (env :mongodb-uri)
+    (let [uri (mongo-uri this)
           {:keys [db conn]} (mg/connect-via-uri uri)]
       (assoc this :db db :conn conn))))
 
@@ -31,8 +45,8 @@
     (stop this)))
 
 (defn new-mongodb
-  []
-  (map->MongoDB {}))
+  ([] (new-mongodb :from-config))
+  ([db-name] (map->MongoDB {:db-name db-name})))
 
 (prepend start (info :mongodb :connecting))
 (append  start (info :mongodb :connected))
