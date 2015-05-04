@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Lein-life by garycrawford</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Lein-life</h1>
+      <h2 class="project-tagline">A Leiningen template which produces a healthy environment</h2>
+      <a href="https://github.com/garycrawford/lein-life" class="btn">View on GitHub</a>
+      <a href="https://github.com/garycrawford/lein-life/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/garycrawford/lein-life/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="life" class="anchor" href="#life" aria-hidden="true"><span class="octicon octicon-link"></span></a>Life</h1>
+
+<p><img src="https://raw.githubusercontent.com/garycrawford/lein-life/master/images/binary_renton.png" alt="Binary Renton" title="Renton from Trainspotting" align="right"></p>
+
+<blockquote>
+<p><em>We start off with high hopes, then we bottle it. We realise
+that we’re all going to die, without really finding out the
+big answers. We develop all those long-winded ideas which just
+interpret the reality of our lives in different ways, without
+really extending our body of worthwhile knowledge, about the big
+things, the real things. Basically, we live a short disappointing life;
+and then we die.</em></p>
+
+<ul>
+<li>Mark Renton, Trainspotting by Irvine Welsh</li>
+</ul>
+</blockquote>
+
+<p>Rents is a Leiningen template to give your project a better environment and chance in life than Mark Renton! It utilises Docker to give you a production like environment running locally on your dev machine where things like metrics and logging now become first class citizens of you dev lifecycle.</p>
+
+<h1>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h1>
+
+<p><a href="https://snap-ci.com/garycrawford/lein-life/branch/master"><img src="https://snap-ci.com/garycrawford/lein-life/branch/master/build_image" alt="Build Status"></a></p>
+
+<p><em>Caveat - heavy development underway... functionality being added rapidly and changes made regularly.</em></p>
+
+<h2>
+<a id="dependencies" class="anchor" href="#dependencies" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dependencies</h2>
+
+<p>To use Life generated projects to their full potential in a dev environment you will need to install Docker and Docker Compose.</p>
+
+<h2>
+<a id="creating-projects" class="anchor" href="#creating-projects" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating projects</h2>
+
+<p>You can use this template by executing:</p>
+
+<pre><code>$ lein new life &lt;project-name&gt; &lt;type&gt; [options]
+
+Types:
+  api      | Create a new web api
+  site     | Create a new site
+  site+api | Create a new site with a new api backend
+
+Options:
+  -d, --db   | DATABASE  | Database to be used. Currently only supports `mongodb`
+  -s, --site | SITE-NAME | Name of the site project
+  -a, --api  | API-NAME  | Name of the api project
+  -h, --help |           |
+</code></pre>
+
+<p>You can then launch the igenerated app or site by executing:</p>
+
+<pre><code>$ cd &lt;project-name&gt;
+$ docker-compose up
+</code></pre>
+
+<p>I find that the Text Triumvirate (zsh, vim &amp; tmux) gives me everything I need for effective Clojure development with Life (see my setup below) however templates should be compatible with the IDE &amp; shell combo of your choice.</p>
+
+<p><img src="https://raw.githubusercontent.com/garycrawford/lein-life/master/images/IDE.png" alt="Tmux and Vim" title="Tmux and Vim for Clojure development"></p>
+
+<h2>
+<a id="working-with-a-life-generated-project" class="anchor" href="#working-with-a-life-generated-project" aria-hidden="true"><span class="octicon octicon-link"></span></a>Working with a Life generated project</h2>
+
+<h3>
+<a id="get-repl-to-api-or-site" class="anchor" href="#get-repl-to-api-or-site" aria-hidden="true"><span class="octicon octicon-link"></span></a>Get REPL to api or site</h3>
+
+<p>When you connect to a REPL in a Life project the REPL is actually running inside a Docker containe, so you have to do a remote connection to it:</p>
+
+<pre><code>;; site
+$ lein repl :connect 192.168.59.103:21212
+
+;; api
+$ lein repl :connect 192.168.59.103:31313
+</code></pre>
+
+<h3>
+<a id="enable-autotest" class="anchor" href="#enable-autotest" aria-hidden="true"><span class="octicon octicon-link"></span></a>Enable autotest</h3>
+
+<pre><code>;; enabling autotest in repl will rerun tests when chnages are saved
+user=&gt; (autotest)
+</code></pre>
+
+<h3>
+<a id="start-site-or-api" class="anchor" href="#start-site-or-api" aria-hidden="true"><span class="octicon octicon-link"></span></a>Start site or API</h3>
+
+<pre><code>;; start the API or site
+user=&gt; (go)
+
+;; refresh changes you have made
+user=&gt; (reset)
+
+;; stop the API or site
+user=&gt; (stop)
+</code></pre>
+
+<h3>
+<a id="viewing-metrics" class="anchor" href="#viewing-metrics" aria-hidden="true"><span class="octicon octicon-link"></span></a>Viewing metrics</h3>
+
+<p>The screenshot below shows the default metrics available as soon as you start your Life project.</p>
+
+<p><img src="https://raw.githubusercontent.com/garycrawford/lein-life/master/images/stats.png" alt="Grafana stats" title="Screenshot of Grafana stats"></p>
+
+<p>To see these simply browse to <a href="http://192.168.59.103">http://192.168.59.103</a>. (N.B. so far this is only tested on a Mac using boot2docker). You will start to see stats once you start your 'site' or 'API' (see above).</p>
+
+<p>N.B. boot2docker has a clock skew issue - if you cannot see metrics you should try running the following command on the host:</p>
+
+<pre><code>$ boot2docker ssh sudo ntpclient -s -h pool.ntp.org
+</code></pre>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/garycrawford/lein-life">Lein-life</a> is maintained by <a href="https://github.com/garycrawford">garycrawford</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
+
