@@ -40,7 +40,7 @@
                       "                      [midje \"1.6.3\"]"                                                                   always
                       "                      [org.clojure/test.check \"0.7.0\"]"                                                  always
                       "                      [com.gfredericks/test.chuck \"0.1.16\"]"                                             always
-                      "                      [kerodon \"0.5.0\"]]"                                                                always
+                      "                      [kerodon \"0.6.0\"]]"                                                                always
                       "       :env {:metrics-host \"192.168.59.103\""                                                             always
                       "             :metrics-port 2003"                                                                           always
                       "             :mongodb-uri  \"mongodb://192.168.59.103/{{path}}\""                                          #(mongodb? db)

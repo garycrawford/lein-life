@@ -41,7 +41,7 @@
                       "                      [midje \"1.6.3\"]"                                                                   always
                       "                      [org.clojure/test.check \"0.7.0\"]"                                                  always
                       "                      [com.gfredericks/test.chuck \"0.1.16\"]"                                             always
-                      "                      [kerodon \"0.5.0\"]]"                                                                always
+                      "                      [kerodon \"0.6.0\"]]"                                                                always
                       "       :env {:metrics-host \"192.168.59.103\""                                                             always
                       "             :metrics-port 2003"                                                                           always
                       "             :mongodb-uri  \"mongodb://192.168.59.103/{{path}}\""                                          #(mongodb? db)
@@ -139,8 +139,8 @@
         "{{#people}}"
         "    <li>{{name}},"
         "        {{location}}"
-        "        <a href=\"http://192.168.59.103:1234/person/{{id}}/update\">edit</a>"
-        "        <a href=\"http://192.168.59.103:1234/person/{{id}}/delete\">delete</a>"
+        "        <a href=\"/person/{{id}}/update\">edit</a>"
+        "        <a href=\"/person/{{id}}/delete\">delete</a>"
         "    </li>"
         "{{/people}}"
         "</ul>"]
@@ -150,11 +150,11 @@
   []
   (->> ["<form action=\"person\" method=\"POST\">"
         "  {{{anti-forgery-field}}}"
-        "  First name:<br>"
-        "  <input type=\"text\" name=\"name\">"
-        "  <br>" "  Location:<br>"
-        "  <input type=\"text\" name=\"location\">"
-        "  <input type=\"submit\" value=\"Submit\">"
+        "  <label for=\"name\">Name:</label>"
+        "  <input type=\"text\" id=\"name\" name=\"name\"><br>"
+        "  <label for=\"location\">Location:</label>"
+        "  <input type=\"text\" id=\"location\" name=\"location\">"
+        "  <input type=\"submit\" id=\"submit\" value=\"Submit\">"
         "</form>"]
        (string/join \newline)))
 
@@ -163,11 +163,10 @@
   (->> ["<form method=\"POST\">"
         "  {{{anti-forgery-field}}}"
         "  <input type=\"hidden\" name=\"id\" value=\"{{id}}\">"
-        "  First name:<br>"
-        "  <input type=\"text\" name=\"name\" value=\"{{name}}\">"
-        "  <br>"
-        "  Location:<br>"
-        "  <input type=\"text\" name=\"location\" value=\"{{location}}\">"
+        "  <label for=\"name\">Name:</label>"
+        "  <input type=\"text\" id=\"name\" name=\"name\" value=\"{{name}}\"><br>"
+        "  <label for=\"location\">Location:</label>"
+        "  <input type=\"text\" id=\"location\" name=\"location\" value=\"{{location}}\">"
         "  <input type=\"submit\" value=\"Edit\">"
         "</form>"]
        (string/join \newline)))

@@ -52,6 +52,7 @@
   (let [sanitized-ns-name (sanitize-ns ns-name)]
     (merge {:name project-name
             :ns-name sanitized-ns-name
+            :api-ns-name (sanitize-ns (:api options))
             :year (str (.get (java.util.Calendar/getInstance) java.util.Calendar/YEAR))
             :project-root (str project-name "/")
             :sanitized-site (name-to-path ns-name)

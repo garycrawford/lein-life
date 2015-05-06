@@ -46,7 +46,7 @@
         response))))
 
 (defn create-handler
-  [metrics-registry]
+  [{:keys [metrics-registry]}]
   (-> (scenic/scenic-handler routes routes-map)
       wrap-view-response
       (json-response/wrap-json-response)
@@ -58,7 +58,7 @@
   [{:keys [metrics-registry server] :as this}]
   (if server
       this
-      (let [handler (create-handler metrics-registry)
+      (let [handler (create-handler this)
             server  (jetty/run-jetty handler jetty-config)]
         (assoc this :server server))))
 

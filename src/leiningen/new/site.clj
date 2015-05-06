@@ -70,8 +70,9 @@
          (if (= db :mongodb)
            ["{{sanitized-site}}/test/{{sanitized-site}}/unit/components/mongodb/core.clj" (render "test/unit/components/mongodb/core.clj" data)]
            ["{{sanitized-site}}/test/{{sanitized-site}}/unit/platform/people_api/core.clj" (render "test/unit/platform/people_api/core.clj" data)])
-         (when (= db :mongodb)
-           ["{{sanitized-site}}/test/{{sanitized-site}}/integration/controllers/home/core.clj" (render "test/integration/controllers/home/core_site_ext.clj" data)])
+         (if (= db :mongodb)
+           ["{{sanitized-site}}/test/{{sanitized-site}}/integration/controllers/home/core.clj" (render "test/integration/controllers/home/core_site_ext.clj" data)]
+           ["{{sanitized-site}}/test/{{sanitized-site}}/integration/controllers/home/core.clj" (render "test/integration/controllers/home/core_site_ext_api.clj" data)])
          (if (= db :mongodb)
            ["{{sanitized-site}}/test/{{sanitized-site}}/unit/controllers/home/core.clj" (render "test/unit/controllers/home/core_site_ext.clj" data)]
            ["{{sanitized-site}}/test/{{sanitized-site}}/unit/controllers/home/core.clj" (render "test/unit/controllers/home/core_site_ext_api.clj" data)])

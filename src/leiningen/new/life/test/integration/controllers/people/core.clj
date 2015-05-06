@@ -23,6 +23,7 @@
   (alter-var-root #'mongodb component/stop))
 
 (against-background [(before :contents (setup)) (after :contents (teardown))]
+
   (facts "when listing people but no-one exists"
     (let [app (create-handler {:people {:mongodb mongodb}})
           res (app (mock/request :get "http://192.168.59.103:4321/api/people"))]
@@ -110,5 +111,5 @@
       (fact "response has application/json content type"
         (get-header response "Content-Type") => "application/json")
      
-     (fact "the updated data is available"
+     (fact "the deleted data is not available"
        (:status (app (mock/request :get location-uri))) => 404))))
