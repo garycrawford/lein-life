@@ -28,7 +28,7 @@
 (defn externalise
   [doc]
   (when doc
-    (assoc (:current doc) :id (mongoid->external (:_id doc)))))
+    (assoc (get-in doc [:current :doc]) :id (mongoid->external (:_id doc)))))
 
 (defn marshall-query
   [{:keys [id] :as query}]
@@ -41,15 +41,21 @@
 
 (defn version-doc
   [doc]
-  {:current (-> doc (assoc :revision 0) (dissoc :id))
+  {:current {:revision 0
+             :doc (dissoc doc :id)}
    :previous []})
 
+(defn update-doc
+  [current update]
+  (merge (:doc current) (dissoc update :id)))
+
 (defn update-versioned-doc
-  [{:keys [current previous]} update-doc]
-  (-> {}
-      (assoc :previous (conj previous current))
-      (assoc :current (merge current (dissoc update-doc :id)))
-      (update-in [:current :revision] inc)))
+  ([doc] (update-versioned-doc doc (get-in doc [:current :doc])))
+  ([{:keys [current previous]} update]
+   (-> {}
+       (assoc :previous (conj previous current))
+       (assoc-in [:current :doc] (update-doc current update))
+       (assoc-in [:current :revision] (-> current :revision inc)))))
 
 (defn find-one-by-query
   [{:keys [db]} collection query]
@@ -83,6 +89,12 @@
     {:updated false}))
 
 (defn delete
-  [mongodb collection id]
-  (let [{:keys [updated]} (update mongodb collection {:id id :deleted true})]
-    {:deleted updated}))
+  [{:keys [db]} collection id]
+  (if-let [_id (external->mongoid id)]
+    (let [updated-doc (->> _id
+                           (mc/find-map-by-id db collection)
+                           update-versioned-doc)
+          deleted-doc (assoc-in updated-doc [:current :deleted] true)
+          result (mc/update-by-id db collection _id deleted-doc)] 
+      {:deleted true})
+    {:deleted false}))
