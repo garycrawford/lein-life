@@ -33,7 +33,7 @@
 
 (defn home
   []
-  (let [people (get-people) 
+  (let [people (get-people)
         view-model (people-list:m->vm people)]
       (model-view-200 {:model (add-anti-forgery view-model)
                        :view  (home-view "introduction")})))
@@ -48,7 +48,7 @@
   (person-response params "update-person"))
 
 (defn update-person-post
-  [params] 
+  [params]
   (let [person (select-keys params [:id :name :location])
         {:keys [updated]} (update-person person)]
     (if updated

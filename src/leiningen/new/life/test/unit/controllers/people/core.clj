@@ -11,10 +11,10 @@
 
 (facts "when listing people"
   (fact "a result can be an empty array"
-    (list-people {:mongodb ..mongodb..}) => (result? []) 
+    (list-people {:mongodb ..mongodb..}) => (result? [])
     (provided
       (find-by-query ..mongodb.. "people" {}) => []))
-  
+
   (fact "a result can be a non-empty array"
     (list-people {:mongodb ..mongodb..}) => (result? [person-with-id])
     (provided
@@ -30,12 +30,12 @@
     (create-person {:mongodb ..mongodb..} person) => (status? 201)
     (provided
       (insert ..mongodb.. "people" person) => {:id "id"}))
-  
+
   (fact "success result will have a populated location header"
     (create-person {:mongodb ..mongodb..} person) => (location? (person-uri "id"))
     (provided
       (insert ..mongodb.. "people" person) => {:id "id"}))
-  
+
   (fact "success result will have an application/json content type header"
     (create-person {:mongodb ..mongodb..} person) => (content-type? "json")
     (provided
@@ -46,7 +46,7 @@
     (read-person {:mongodb ..mongodb..} ..id..) => (status? 200)
     (provided
       (find-by-id ..mongodb.. "people" ..id..) => person-with-id))
-  
+
   (fact "success will result in correct data"
     (read-person {:mongodb ..mongodb..} ..id..) => (result? person-with-id)
     (provided
@@ -57,7 +57,7 @@
     (update-person {:mongodb ..mongodb..} person-with-id) => (status? 204)
     (provided
       (update ..mongodb.. "people" person-with-id) => irrelevant))
-        
+
   (fact "success will result will contain a location header"
     (update-person {:mongodb ..mongodb..} person-with-id) => (location? (person-uri "id"))
     (provided
@@ -73,7 +73,7 @@
     (delete-person {:mongodb ..mongodb..} ..id..) => (status? 204)
     (provided
       (delete ..mongodb.. "people" ..id..) => irrelevant))
-        
+
   (fact "success will have an application/json content type"
     (delete-person {:mongodb ..mongodb..} ..id..) => (content-type? "json")
     (provided

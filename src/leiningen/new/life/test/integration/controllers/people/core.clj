@@ -30,7 +30,7 @@
 
       (fact "response has a 200 status code"
           (:status res) => 200)
-      
+
       (fact "response has application/json content type"
           (get-header res "Content-Type") => "application/json")
 
@@ -43,7 +43,7 @@
 
       (fact "response has a 201 status code"
         (:status res) => 201)
-      
+
       (fact "response has application/json content type"
         (get-header res "Content-Type") => "application/json")
 
@@ -56,7 +56,7 @@
 
       (fact "the response has a 200 status code"
         (:status res) => 200)
-      
+
       (fact "the response has application/json content type"
         (get-header res "Content-Type") => "application/json")
 
@@ -69,13 +69,13 @@
           location-uri (get-header setup-response "Location")
           id (last (split location-uri #"/"))
           response (app (mock/request :get location-uri))]
-      
+
       (fact "response has a 200 status code"
         (:status response) => 200)
-      
+
       (fact "response has application/json content type"
         (get-header response "Content-Type") => "application/json")
- 
+
       (fact "response has user data"
         (decode (:body response) true) => {:result {:id id :location "garden" :name "erin"}})))
 
@@ -85,16 +85,16 @@
           location-uri (get-header setup-response "Location")
           id (last (split location-uri #"/"))
           response (app (mock/request :put location-uri {:location "table"}))]
-      
+
       (fact "response has a 204 status code"
         (:status response) => 204)
-      
+
       (fact "response has application/json content type"
         (get-header response "Content-Type") => "application/json")
-     
+
       (fact "response contains a location header with pointer to the resurce"
         (get-header response "Location") => #(re-matches #"http:\/\/192.168.59.103:4321\/api\/people\/.*" %))
-     
+
      (fact "the updated data is available"
        (decode (:body (app (mock/request :get location-uri))) true) => (contains {:result (contains {:location "table"})}))))
 
@@ -104,12 +104,12 @@
           location-uri (get-header setup-response "Location")
           id (last (split location-uri #"/"))
           response (app (mock/request :delete location-uri))]
-      
+
       (fact "response has a 204 status code"
         (:status response) => 204)
-      
+
       (fact "response has application/json content type"
         (get-header response "Content-Type") => "application/json")
-     
+
      (fact "the deleted data is not available"
        (:status (app (mock/request :get location-uri))) => 404))))

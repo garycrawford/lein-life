@@ -55,7 +55,7 @@
   (-> [" :dependencies [[org.clojure/clojure \"1.6.0\"]"                                        always
        "                [ring/ring-jetty-adapter \"1.3.2\"]"                                    always
        "                [ring/ring-json \"0.3.1\"]"                                             always
-       "                [ring/ring-defaults \"0.1.4\"]"                                         always
+       "                [ring/ring-defaults \"0.1.5\"]"                                         always
        "                [scenic \"0.2.3\" :exclusions [org.clojure/tools.reader]]"              always
        "                [reloaded.repl \"0.1.0\"]"                                              always
        "                [com.stuartsierra/component \"0.2.3\"]"                                 always
@@ -65,7 +65,7 @@
        "                [metrics-clojure-ring \"2.5.1\"]"                                       always
        "                [environ \"1.0.0\"]"                                                    always
        "                [com.taoensso/timbre \"3.4.0\" :exclusions [org.clojure/tools.reader]]" always
-       "                [prismatic/schema \"0.4.0\"]"                                           always
+       "                [prismatic/schema \"0.4.2\"]"                                           always
        "                [robert/hooke \"1.3.0\"]"                                               always
        "                [com.novemberain/monger \"2.1.0\"]"                                     #(mongodb? db)
        "                [jstrutz/hashids \"1.0.1\"]"                                            #(mongodb? db)

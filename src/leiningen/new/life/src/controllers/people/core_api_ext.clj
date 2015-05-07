@@ -21,8 +21,10 @@
 (defn create-person
   [{:keys [mongodb]} {:keys [name location]}]
   (let [{:keys [id]} (m/insert mongodb collection {:name name :location location})]
-    (-> (created (person-uri id) {:result {:created true :id id}})
-        (header "Content-Type" "application/json"))))
+    (header
+      (created (person-uri id) {:result {:created true :id id}})
+      "Content-Type"
+      "application/json")))
 
 (defn read-person
   [{:keys [mongodb]} id]
@@ -40,5 +42,4 @@
 (defn delete-person
   [{:keys [mongodb]} id]
   (m/delete mongodb collection id)
-  (-> (status {} 204)
-      (header "Content-Type" "application/json")))
+  (header (status {} 204) "Content-Type" "application/json"))

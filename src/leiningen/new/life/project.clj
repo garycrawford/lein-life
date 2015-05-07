@@ -14,6 +14,6 @@
                     ["with-profile" "production" "deps" ":tree"]
                     ["ancient"]
                     ["kibit"]
-                    ["bikeshed"]
+                    ["bikeshed" "-m" "120"]
                     ["eastwood"]]
             "slamhound" ["run" "-m" "slam.hound"]})

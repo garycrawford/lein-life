@@ -35,7 +35,7 @@
               (get-in response [:body :view :path])) => "templates/home/introduction.mustache"
             (provided
               (find-by-query mongo-component collection {}) => people))
-   
+
        (fact "contains a view function"
             (let [response (home home-component)]
               (get-in response [:body :view :fn])) => fn?
@@ -48,7 +48,7 @@
                     (update-person-get home-component {:id ..id..}) => (status? 200)
                     (provided
                       (find-by-id mongo-component collection ..id..) => person))
- 
+
               (fact "contains a text/html content type"
                     (update-person-get home-component {:id ..id..}) => (content-type? "html")
                     (provided
@@ -101,7 +101,7 @@
                     (delete-person-get home-component {:id ..id..}) => (status? 200)
                     (provided
                       (find-by-id mongo-component collection ..id..) => person))
- 
+
               (fact "contains a text/html content type"
                     (delete-person-get home-component {:id ..id..}) => (content-type? "html")
                     (provided
@@ -154,7 +154,7 @@
                     (update-person-post home-component person-with-id) => (status? 303)
                     (provided
                       (update mongo-component collection person-with-id) => {:updated true}))
- 
+
               (fact "contains a '/' location header"
                     (update-person-post home-component person-with-id) => (location? "/")
                     (provided
@@ -189,7 +189,7 @@
                     (delete-person-post home-component {:id ..id..}) => (status? 303)
                     (provided
                       (delete mongo-component collection ..id..) => {:deleted true}))
- 
+
               (fact "contains a '/' location header"
                     (delete-person-post home-component {:id ..id..}) => (location? "/")
                     (provided
@@ -223,7 +223,7 @@
              (create-person-post home-component person) => (status? 303)
              (provided
                (insert mongo-component collection person) => anything))
- 
+
        (fact "contains a '/' location header"
              (create-person-post home-component person) => (location? "/")
              (provided

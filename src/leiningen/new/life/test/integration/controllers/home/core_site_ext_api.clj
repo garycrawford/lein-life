@@ -90,7 +90,7 @@
                                (follow-redirect)
                                (within [:ul :li]
                                  (has (some-text? "edited-username, edited-location"))))) => anything)
- 
+
                     (fact "People can be deleted"
                          (with-redefs [http/get get-response
                                        http/delete delete-person-response]

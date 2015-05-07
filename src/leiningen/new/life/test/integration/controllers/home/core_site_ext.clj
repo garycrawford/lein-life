@@ -42,7 +42,7 @@
                              (follow-redirect)
                              (within [:ul :li]
                                (has (some-text? "edited-username, edited-location")))) => anything)
-                    
+
                     (fact "People can be deleted"
                          (-> (session (create-handler {:home {:mongodb mongodb}}))
                              (visit "/")

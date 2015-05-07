@@ -48,7 +48,7 @@
   (person-response component params "update-person"))
 
 (defn update-person-post
-  [{:keys [mongodb]} params] 
+  [{:keys [mongodb]} params]
   (let [person (select-keys params [:id :name :location])
         {:keys [updated]} (update mongodb "people" person)]
     (if updated

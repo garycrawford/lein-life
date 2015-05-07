@@ -31,7 +31,7 @@
               (get-in response [:body :view :path])) => "templates/home/introduction.mustache"
             (provided
               (get-people) => people))
-   
+
        (fact "contains a view function"
             (let [response (home)]
               (get-in response [:body :view :fn])) => fn?
@@ -44,7 +44,7 @@
                     (update-person-get {:id ..id..}) => (status? 200)
                     (provided
                       (get-person ..id..) => person))
- 
+
               (fact "contains a text/html content type"
                     (update-person-get {:id ..id..}) => (content-type? "html")
                     (provided
@@ -97,7 +97,7 @@
                     (delete-person-get {:id ..id..}) => (status? 200)
                     (provided
                       (get-person ..id..) => person))
- 
+
               (fact "contains a text/html content type"
                     (delete-person-get {:id ..id..}) => (content-type? "html")
                     (provided
@@ -150,7 +150,7 @@
                     (update-person-post person-with-id) => (status? 303)
                     (provided
                       (update-person person-with-id) => {:updated true}))
- 
+
               (fact "contains a '/' location header"
                     (update-person-post person-with-id) => (location? "/")
                     (provided
@@ -185,7 +185,7 @@
                     (delete-person-post {:id ..id..}) => (status? 303)
                     (provided
                       (delete-person ..id..) => {:deleted true}))
- 
+
               (fact "contains a '/' location header"
                     (delete-person-post {:id ..id..}) => (location? "/")
                     (provided
@@ -219,7 +219,7 @@
              (create-person-post person) => (status? 303)
              (provided
                (create-person person) => anything))
- 
+
        (fact "contains a '/' location header"
              (create-person-post person) => (location? "/")
              (provided

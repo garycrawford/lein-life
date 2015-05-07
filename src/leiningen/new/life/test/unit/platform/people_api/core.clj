@@ -24,7 +24,7 @@
 (facts "response to the parse-response function"
        (fact "should contain a result structured as edn"
              (parse-response people-list-http-response) => people-list)
-       
+
        (fact "should return nil when no body is provided"
              (parse-response nil) => nil))
 
@@ -50,7 +50,7 @@
              (provided
                (client/post people-uri {:form-params person}) => (-> (created "http://192.168.59.103:4321/api/people/id" (encode {:result {:created true :id "id"}}))
                                                                      (header "Content-Type" "application/json"))))
-       
+
        (fact "should contain id of created person"
              (create-person person) => (contains {:id "id"})
              (provided

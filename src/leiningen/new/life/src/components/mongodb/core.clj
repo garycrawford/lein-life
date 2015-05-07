@@ -95,6 +95,6 @@
                            (mc/find-map-by-id db collection)
                            update-versioned-doc)
           deleted-doc (assoc-in updated-doc [:current :deleted] true)
-          result (mc/update-by-id db collection _id deleted-doc)] 
+          result (mc/update-by-id db collection _id deleted-doc)]
       {:deleted true})
     {:deleted false}))
