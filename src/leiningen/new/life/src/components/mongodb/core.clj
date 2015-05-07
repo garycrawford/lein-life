@@ -21,7 +21,7 @@
       (apply str left-long right-long))))
 
 (with-handler! #'external->mongoid
-  "Here's an optional docstring about the handler."
+  "Handles invalid mongoid."
   java.lang.IllegalArgumentException
   (fn [e & args] (warn "illegal mongoid provided" args)))
 
