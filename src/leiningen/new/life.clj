@@ -7,8 +7,7 @@
             [camel-snake-kebab.core :refer [->PascalCase]]
             [leiningen.new.common-api-templates :refer [api-var-map]]
             [leiningen.new.common-site-templates :refer [site-var-map]]
-            [leiningen.new.templates :refer  [*force?*]]
-            [leiningen.new.common-templates :refer [compose-api-proj compose-site-proj compose-deps]]))
+            [leiningen.new.templates :refer  [*force?*]]))
 
 (def render (renderer "life"))
 
@@ -85,22 +84,29 @@
    (let [opts (merge options (when add-api-dep? {:db :api}))
          data (site-template-data parent-name site opts)
          files (site-files data opts)
-         compose-path (str parent-name "/docker-compose.yml")
-         compose-site-content (compose-site-proj
-                                (merge (names parent-name site)
-                                       (when add-api-dep? {:api-name (sanitize-ns api)}))
-                                opts)]
+         ; compose-path (str parent-name "/docker-compose.yml")
+         ; compose-site-content (compose-site-proj
+         ;                        (merge (names parent-name site)
+         ;                               (when add-api-dep? {:api-name (sanitize-ns api)}))
+         ;                        opts)
+         
+         ]
       (apply ->files data files)
-      (spit compose-path compose-site-content :append true))))
+      ;(spit compose-path compose-site-content :append true)
+      )))
 
 (defn create-api
   [parent-name {:keys [api] :as options}]
   (let [data (api-template-data parent-name api options)
         files (api-files data options)
-        compose-path (str parent-name "/docker-compose.yml")
-        compose-api-content (compose-api-proj (names parent-name api) options)]
+        ;compose-path (str parent-name "/docker-compose.yml")
+        ;compose-api-content (compose-api-proj (names parent-name api) options)
+        
+        ]
      (apply ->files data files)
-     (spit compose-path compose-api-content :append true)))
+     ; (spit compose-path compose-api-content :append true)
+     
+     ))
 
 (defn create-site+api
   [parent-name options]
@@ -117,7 +123,42 @@
     "site+api" (create-site+api name options)
     (exit 1 (usage summary)))
 
-  (spit (str name "/docker-compose.yml") (compose-deps options) :append true))
+  ;(spit (str name "/docker-compose.yml") (compose-deps options) :append true)
+  )
+
+(defn api-vars
+  [api-name]
+  {:api-ns-name (sanitize-ns api-name)
+   :api-docker-name (string/replace api-name "-" "")
+   :api-dockerised-svr (str (->PascalCase api-name) "DevSvr")
+   :api-path (string/replace api-name "-" "_")})
+
+(defn site-vars
+  [site-name]
+  {:site-ns-name (sanitize-ns site-name)
+   :site-docker-name (string/replace site-name "-" "")
+   :site-dockerised-svr (str (->PascalCase site-name) "DevSvr")
+   :site-path (string/replace site-name "-" "_")})
+
+(defn site+api-vars
+  [api-name site-name]
+  (merge (api-vars api-name) (site-vars site-name)))
+
+(defn db-name
+  [parent-name]
+  {:db-name (string/replace parent-name "-" "_")})
+
+(defn create-projects
+  [name template-type {:keys [api site] :as options} summary]
+  (let [db-name (db-name name)
+        site+api (site+api-vars api site)
+        compose-vars (merge site+api db-name)
+        compose-fn (partial spit (str name "/docker-compose.yml"))]
+    (case template-type
+      "api" (do (create-api name options) (compose-fn (render "docker-compose-api.yml" compose-vars)))
+      "site" (do (create-site name options) (compose-fn (render "docker-compose-site.yml" compose-vars)))
+      "site+api" (do (create-site+api name options) (compose-fn (render "docker-compose-site+api.yml" compose-vars)))
+      (exit 1 (usage summary)))))
 
 (defn life
   [name & args]

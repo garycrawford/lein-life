@@ -1,4 +1,5 @@
-GET      /api             entry-point
+GET      /                entry-point-redirect
+GET      /api             entry-point-redirect
 
 GET      /api/people      list-people
 POST     /api/people      create-person

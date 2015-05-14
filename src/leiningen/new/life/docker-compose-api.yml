@@ -1,0 +1,29 @@
+{{api-docker-name}}:
+  build: ./{{api-path}}
+  ports:
+   - "4321:1234"
+   - "31313:31313"
+  volumes:
+   - ./{{api-path}}:/usr/src/app
+  links:
+   - metrics
+   - db
+  hostname: "{{api-dockerised-svr}}"
+  environment:
+    MONGODB_URI: mongodb://192.168.59.103/{{db-name}}
+    METRICS_HOST: 192.168.59.103
+    METRICS_PORT: 2003
+    APP_NAME: {{api-ns-name}}
+  command: lein repl :headless :host 0.0.0.0 :port 31313
+metrics:
+  image: garycrawford/grafana_graphite:0.0.1
+  volumes:
+   - ./dashboards:/src/dashboards
+  ports:
+   - "80:80"
+   - "2003:2003"
+db:
+  image: mongo:3.0.1
+  ports:
+  - "27017:27017"
+  command: --smallfiles

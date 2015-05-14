@@ -1,31 +1,19 @@
 (ns leiningen.new.api
-  (:require [leiningen.new.templates :refer [renderer]]))
+  (:require [leiningen.new.templates :refer [renderer]]
+            [leiningen.new.mongo-template :refer :all]
+            [leiningen.new.db-template :refer :all]))
 
 (def render (renderer "life"))
 
 (defn component-files
-  [data {:keys [db]}]
-  (let [files [(when (= db :mongodb)
-                 ["{{sanitized-api}}/src/{{sanitized-api}}/components/mongodb/core.clj" (render "src/components/mongodb/core.clj" data)])
-               (when (= db :mongodb)
-                 ["{{sanitized-api}}/src/{{sanitized-api}}/components/mongodb/lifecycle.clj" (render "src/components/mongodb/lifecycle.clj" data)])
-               (when (= db :mongodb)
-                 ["{{sanitized-api}}/src/{{sanitized-api}}/components/jetty/lifecycle.clj" (render "src/components/jetty/lifecycle_api_ext.clj" data)])
-               ["{{sanitized-api}}/src/{{sanitized-api}}/components/graphite/lifecycle.clj" (render "src/components/graphite/lifecycle.clj" data)]
-               ["{{sanitized-api}}/src/{{sanitized-api}}/components/system.clj" (render "src/components/system.clj" data)]]]
-    (remove nil? files)))
+  [data]
+  [["{{sanitized-api}}/src/{{sanitized-api}}/components/graphite/lifecycle.clj" (render "src/components/graphite/lifecycle.clj" data)]])
 
 (defn controllers-files
-  [data {:keys [db]}]
-  (let [files
-        [(when (= db :mongodb)
-           ["{{sanitized-api}}/src/{{sanitized-api}}/controllers/people/lifecycle.clj" (render "src/controllers/people/lifecycle.clj" data)])
-         (when (= db :mongodb)
-           ["{{sanitized-api}}/src/{{sanitized-api}}/controllers/people/core.clj" (render "src/controllers/people/core_api_ext.clj" data)])
-         ["{{sanitized-api}}/src/{{sanitized-api}}/controllers/api/core.clj" (render "src/controllers/api/core.clj" data)]
-         ["{{sanitized-api}}/src/{{sanitized-api}}/controllers/healthcheck/lifecycle.clj" (render "src/controllers/healthcheck/lifecycle.clj" data)]
-         ["{{sanitized-api}}/src/{{sanitized-api}}/controllers/healthcheck/core.clj" (render "src/controllers/healthcheck/core_api.clj" data)]]]
-    (remove nil? files)))
+  [data]
+  [["{{sanitized-api}}/src/{{sanitized-api}}/controllers/api/core.clj" (render "src/controllers/api/core.clj" data)]
+   ["{{sanitized-api}}/src/{{sanitized-api}}/controllers/healthcheck/lifecycle.clj" (render "src/controllers/healthcheck/lifecycle.clj" data)]
+   ["{{sanitized-api}}/src/{{sanitized-api}}/controllers/healthcheck/core.clj" (render "src/controllers/healthcheck/core_api.clj" data)]])
 
 (defn templates-files
   [data]
@@ -41,18 +29,10 @@
    ["{{sanitized-api}}/src/{{sanitized-api}}/responses.clj" (render "src/responses.clj" data)]])
 
 (defn test-files
-  [data {:keys [db]}]
-  (let [files
-        [["{{sanitized-api}}/test/{{sanitized-api}}/checkers/core.clj" (render "test/checkers/core.clj" data)]
-         (when (= db :mongodb)
-           ["{{sanitized-api}}/test/{{sanitized-api}}/unit/components/mongodb/core.clj" (render "test/unit/components/mongodb/core.clj" data)])
-         (when (= db :mongodb)
-           ["{{sanitized-api}}/test/{{sanitized-api}}/unit/controllers/people/core.clj" (render "test/unit/controllers/people/core.clj" data)])
-         (when (= db :mongodb)
-           ["{{sanitized-api}}/test/{{sanitized-api}}/integration/controllers/people/core.clj" (render "test/integration/controllers/people/core.clj" data)])
-         ["{{sanitized-api}}/test/{{sanitized-api}}/unit/controllers/healthcheck/core.clj" (render "test/unit/controllers/healthcheck/core.clj" data)]
-         ["{{sanitized-api}}/test/{{sanitized-api}}/unit/components/graphite/lifecycle.clj" (render "test/unit/components/graphite/lifecycle.clj" data)]]]
-    (remove nil? files)))
+  [data]
+  [["{{sanitized-api}}/test/{{sanitized-api}}/checkers/core.clj" (render "test/checkers/core.clj" data)]
+   ["{{sanitized-api}}/test/{{sanitized-api}}/unit/controllers/healthcheck/core.clj" (render "test/unit/controllers/healthcheck/core.clj" data)]
+   ["{{sanitized-api}}/test/{{sanitized-api}}/unit/components/graphite/lifecycle.clj" (render "test/unit/components/graphite/lifecycle.clj" data)]])
 
 (defn dashboards-files
   [data]
@@ -81,11 +61,12 @@
 (defn api-files
   [data args]
   (concat (src-files data)
-          (test-files data args)
+          (test-files data)
           (dashboards-files data)
           (resources-files data)
           (dev-files data)
           (project-files data)
-          (controllers-files data args)
+          (controllers-files data)
           (templates-files data)
-          (component-files data args)))
+          (component-files data)
+          (db-api-files args data)))

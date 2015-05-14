@@ -1,38 +1,19 @@
 (ns leiningen.new.site
-  (:require [leiningen.new.templates :refer [renderer]]))
+  (:require [leiningen.new.templates :refer [renderer]]
+            [leiningen.new.mongo-template :refer :all]
+            [leiningen.new.api-template :refer :all]
+            [leiningen.new.db-template :refer :all]))
 
 (def render (renderer "life"))
 
 (defn component-files
-  [data {:keys [db]}]
-  (let [files [(when (= db :mongodb)
-                 ["{{sanitized-site}}/src/{{sanitized-site}}/components/mongodb/core.clj" (render "src/components/mongodb/core.clj" data)])
-               (when (= db :mongodb)
-                 ["{{sanitized-site}}/src/{{sanitized-site}}/components/mongodb/lifecycle.clj" (render "src/components/mongodb/lifecycle.clj" data)])
-               (if (= db :mongodb)
-                 ["{{sanitized-site}}/src/{{sanitized-site}}/components/jetty/lifecycle.clj" (render "src/components/jetty/lifecycle_site_ext.clj" data)]
-                 ["{{sanitized-site}}/src/{{sanitized-site}}/components/jetty/lifecycle.clj" (render "src/components/jetty/lifecycle_site_int.clj" data)])
-               ["{{sanitized-site}}/src/{{sanitized-site}}/components/system.clj" (render "src/components/system.clj" data)]
-               ["{{sanitized-site}}/src/{{sanitized-site}}/components/graphite/lifecycle.clj" (render "src/components/graphite/lifecycle.clj" data)]]]
-    (remove nil? files)))
-
-(defn platform-files
-  [data {:keys [db]}]
-  (let [files [(when (= db :api)
-                 ["{{sanitized-site}}/src/{{sanitized-site}}/platform/people_api/core.clj" (render "src/platform/people_api/core.clj" data)])]]
-    (remove nil? files)))
+  [data]
+  [["{{sanitized-site}}/src/{{sanitized-site}}/components/graphite/lifecycle.clj" (render "src/components/graphite/lifecycle.clj" data)]])
 
 (defn controllers-files
-  [data {:keys [db]}]
-  (let [files
-        [(when (= db :mongodb)
-           ["{{sanitized-site}}/src/{{sanitized-site}}/controllers/home/lifecycle.clj" (render "src/controllers/home/lifecycle.clj" data)])
-         (if (= db :mongodb)
-           ["{{sanitized-site}}/src/{{sanitized-site}}/controllers/home/core.clj" (render "src/controllers/home/core_site_ext.clj" data)]
-           ["{{sanitized-site}}/src/{{sanitized-site}}/controllers/home/core.clj" (render "src/controllers/home/core_site_ext_api.clj" data)])
-         ["{{sanitized-site}}/src/{{sanitized-site}}/controllers/healthcheck/lifecycle.clj" (render "src/controllers/healthcheck/lifecycle.clj" data)]
-         ["{{sanitized-site}}/src/{{sanitized-site}}/controllers/healthcheck/core.clj" (render "src/controllers/healthcheck/core_site.clj" data)]]]
-    (remove nil? files)))
+  [data]
+  [["{{sanitized-site}}/src/{{sanitized-site}}/controllers/healthcheck/lifecycle.clj" (render "src/controllers/healthcheck/lifecycle.clj" data)]
+   ["{{sanitized-site}}/src/{{sanitized-site}}/controllers/healthcheck/core.clj" (render "src/controllers/healthcheck/core_site.clj" data)]])
 
 (defn models-files
   [data]
@@ -64,21 +45,10 @@
    ["{{sanitized-site}}/src/{{sanitized-site}}/responses.clj" (render "src/responses.clj" data)]])
 
 (defn test-files
-  [data {:keys [db]}]
-  (let [files
-        [["{{sanitized-site}}/test/{{sanitized-site}}/checkers/core.clj" (render "test/checkers/core.clj" data)]
-         (if (= db :mongodb)
-           ["{{sanitized-site}}/test/{{sanitized-site}}/unit/components/mongodb/core.clj" (render "test/unit/components/mongodb/core.clj" data)]
-           ["{{sanitized-site}}/test/{{sanitized-site}}/unit/platform/people_api/core.clj" (render "test/unit/platform/people_api/core.clj" data)])
-         (if (= db :mongodb)
-           ["{{sanitized-site}}/test/{{sanitized-site}}/integration/controllers/home/core.clj" (render "test/integration/controllers/home/core_site_ext.clj" data)]
-           ["{{sanitized-site}}/test/{{sanitized-site}}/integration/controllers/home/core.clj" (render "test/integration/controllers/home/core_site_ext_api.clj" data)])
-         (if (= db :mongodb)
-           ["{{sanitized-site}}/test/{{sanitized-site}}/unit/controllers/home/core.clj" (render "test/unit/controllers/home/core_site_ext.clj" data)]
-           ["{{sanitized-site}}/test/{{sanitized-site}}/unit/controllers/home/core.clj" (render "test/unit/controllers/home/core_site_ext_api.clj" data)])
-         ["{{sanitized-site}}/test/{{sanitized-site}}/unit/components/graphite/lifecycle.clj" (render "test/unit/components/graphite/lifecycle.clj" data)]
-         ["{{sanitized-site}}/test/{{sanitized-site}}/unit/controllers/healthcheck/core.clj" (render "test/unit/controllers/healthcheck/core.clj" data)]]]
-    (remove nil? files)))
+  [data]
+  [["{{sanitized-site}}/test/{{sanitized-site}}/checkers/core.clj" (render "test/checkers/core.clj" data)]
+   ["{{sanitized-site}}/test/{{sanitized-site}}/unit/components/graphite/lifecycle.clj" (render "test/unit/components/graphite/lifecycle.clj" data)]
+   ["{{sanitized-site}}/test/{{sanitized-site}}/unit/controllers/healthcheck/core.clj" (render "test/unit/controllers/healthcheck/core.clj" data)]])
 
 (defn dashboards-files
   [data]
@@ -106,15 +76,15 @@
 
 (defn site-files
   [data args]
-  (concat (src-files data)
-          (test-files data args)
+  (concat (component-files data)
+          (controllers-files data)
+          (models-files data)
+          (views-files data)
+          (templates-files data)
+          (src-files data)
+          (test-files data)
           (dashboards-files data)
           (resources-files data)
           (dev-files data)
           (project-files data)
-          (controllers-files data args)
-          (views-files data)
-          (models-files data)
-          (templates-files data)
-          (component-files data args)
-          (platform-files data args)))
+          (db-site-files args data)))

@@ -8,7 +8,6 @@
             [ring.util.response :as util]
             [scenic.routes :as scenic]
             [taoensso.timbre :refer [info]]
-            [{{ns-name}}.controllers.api.core :as api]
             [{{ns-name}}.controllers.people.core :as people]
             [{{ns-name}}.controllers.healthcheck.core :as healthcheck]
             [robert.hooke :refer  [prepend append]]))
@@ -17,8 +16,7 @@
 
 (defn routes-map
   [{:keys [people]}]
-  {:entry-point-redirect (fn [_] (util/redirect "/api"))
-   :entry-point          (fn [_] (api/entry-point))
+  {:entry-point-redirect (fn [_] (util/redirect "/api/people"))
    :list-people          (fn [_] (people/list-people people))
    :create-person        (fn [{:keys [params]}] (people/create-person people params))
    :read-person          (fn [{:keys [params]}] (people/read-person people (:id params)))
