@@ -21,7 +21,7 @@
   (stop [this]
     (component/stop-system this components)))
 
-(defn new-api-system
+(defn new-{{ns-name}}-system
   "Constructs the component system for the application."
   []
   (let [metrics-registry (new-registry)]
