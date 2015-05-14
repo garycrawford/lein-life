@@ -1,10 +1,10 @@
-(ns site.components.system
+(ns {{ns-name}}.components.system
   (:require [com.stuartsierra.component :as component]
             [metrics.core :refer [new-registry]]
             [metrics.jvm.core :as jvm]
-            [site.components.graphite.lifecycle :refer [new-metrics-reporter]]
-            [site.components.jetty.lifecycle :refer [new-web-server]]
-            [site.logging-config]))
+            [{{ns-name}}.components.graphite.lifecycle :refer [new-metrics-reporter]]
+            [{{ns-name}}.components.jetty.lifecycle :refer [new-web-server]]
+            [{{ns-name}}.logging-config]))
 
 (def components [:web-server
                  :metrics-registry
