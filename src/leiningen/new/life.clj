@@ -128,9 +128,9 @@
         compose-vars (merge site+api db-name)
         compose-fn (partial spit (str name "/docker-compose.yml"))]
     (case template-type
-      "api" (do (create-api name options) (compose-fn (render "docker-compose-api.yml" compose-vars)))
-      "site" (do (create-site name options) (compose-fn (render "docker-compose-site.yml" compose-vars)))
-      "site+api" (do (create-site+api name options) (compose-fn (render "docker-compose-site+api.yml" compose-vars)))
+      "api" (do (create-api name options) (compose-fn (render "api/docker-compose.yml" compose-vars)))
+      "site" (do (create-site name options) (compose-fn (render "site/docker-compose.yml" compose-vars)))
+      "site+api" (do (create-site+api name options) (compose-fn (render "site+api/docker-compose.yml" compose-vars)))
       (exit 1 (usage summary)))))
 
 (defn life
