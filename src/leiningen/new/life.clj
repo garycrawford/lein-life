@@ -83,30 +83,14 @@
   ([parent-name {:keys [site api] :as options} add-api-dep?]
    (let [opts (merge options (when add-api-dep? {:db :api}))
          data (site-template-data parent-name site opts)
-         files (site-files data opts)
-         ; compose-path (str parent-name "/docker-compose.yml")
-         ; compose-site-content (compose-site-proj
-         ;                        (merge (names parent-name site)
-         ;                               (when add-api-dep? {:api-name (sanitize-ns api)}))
-         ;                        opts)
-         
-         ]
-      (apply ->files data files)
-      ;(spit compose-path compose-site-content :append true)
-      )))
+         files (site-files data opts)]
+      (apply ->files data files))))
 
 (defn create-api
   [parent-name {:keys [api] :as options}]
   (let [data (api-template-data parent-name api options)
-        files (api-files data options)
-        ;compose-path (str parent-name "/docker-compose.yml")
-        ;compose-api-content (compose-api-proj (names parent-name api) options)
-        
-        ]
-     (apply ->files data files)
-     ; (spit compose-path compose-api-content :append true)
-     
-     ))
+        files (api-files data options)]
+     (apply ->files data files)))
 
 (defn create-site+api
   [parent-name options]
@@ -114,17 +98,6 @@
     (do
       (create-site parent-name options true)
       (create-api parent-name options))))
-
-(defn create-projects
-  [name template-type options summary]
-  (case template-type
-    "api" (create-api name options)
-    "site" (create-site name options)
-    "site+api" (create-site+api name options)
-    (exit 1 (usage summary)))
-
-  ;(spit (str name "/docker-compose.yml") (compose-deps options) :append true)
-  )
 
 (defn api-vars
   [api-name]
