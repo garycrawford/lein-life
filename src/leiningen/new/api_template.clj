@@ -11,6 +11,6 @@
      ["{{sanitized-api}}/test/{{sanitized-api}}/unit/controllers/people/core.clj" (render "api/test/unit/controllers/people/core.clj" data)]
      ["{{sanitized-api}}/src/{{sanitized-api}}/components/mongodb/lifecycle.clj" (render "api/src/components/mongodb/lifecycle.clj" data)]
      ["{{sanitized-api}}/src/{{sanitized-api}}/components/mongodb/core.clj" (render "api/src/components/mongodb/core.clj" data)]
-     ["{{sanitized-api}}/test/{{sanitized-api}}/unit/components/mongodb/core.clj" (render "common/test/unit/components/mongodb/core.clj" data)]
+     ["{{sanitized-api}}/test/{{sanitized-api}}/unit/components/mongodb/core.clj" (render "api/test/unit/components/mongodb/core.clj" data)]
      ["{{sanitized-api}}/src/{{sanitized-api}}/components/jetty/lifecycle.clj" (render "api/src/components/jetty/lifecycle.clj" data)]
      ["{{sanitized-api}}/src/{{sanitized-api}}/components/system.clj" (render "api/src/components/system.clj" data)]]))

@@ -6,7 +6,7 @@
 (defmethod db-site-files :mongodb
   [_ data]
   (let [render (renderer "life")]
-    [["{{sanitized-site}}/test/{{sanitized-site}}/unit/components/mongodb/core.clj" (render "common/test/unit/components/mongodb/core.clj" data)]
+    [["{{sanitized-site}}/test/{{sanitized-site}}/unit/components/mongodb/core.clj" (render "site/test/unit/components/mongodb/core.clj" data)]
      ["{{sanitized-site}}/test/{{sanitized-site}}/integration/controllers/home/core.clj" (render "site/test/integration/controllers/home/core.clj" data)]
      ["{{sanitized-site}}/test/{{sanitized-site}}/unit/controllers/home/core.clj" (render "site/test/unit/controllers/home/core.clj" data)]
      ["{{sanitized-site}}/src/{{sanitized-site}}/controllers/home/core.clj" (render "site/src/controllers/home/core.clj" data)]
