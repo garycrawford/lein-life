@@ -12,10 +12,10 @@
 (def render (renderer "life"))
 
 (def cli-options
-  [["-d" "--db DATABASE" "Database to be used. Currently only supports `mongodb`"
+  [["-d" "--db DATABASE" "Database to be used. Supports `mongodb` and `api`"
     :parse-fn keyword
     :default :mongodb
-    :validate [#(= % :mongodb) "Currently only mongodb is currently supported"]]
+    :validate [#(or (= % :mongodb) (= % :api)) "Currently only mongodb or api are currently supported"]]
    ["-s" "--site SITE" "Name of the site project"
     :default "site"]
    ["-a" "--api API" "Name of the api project"
@@ -32,7 +32,6 @@
         "Types:"
         "  site       Create a new site"
         "  api        Create a new web api"
-        "  site+api   Create a new site with api back end"
         ""
         "Options:"
         options-summary
@@ -78,27 +77,6 @@
             :sanitized-api  (name-to-path ns-name)}
           (api-var-map sanitized-ns-name options))))
 
-(defn create-site
-  ([parent-name options] (create-site parent-name options nil))
-  ([parent-name {:keys [site api] :as options} add-api-dep?]
-   (let [opts (merge options (when add-api-dep? {:db :api}))
-         data (site-template-data parent-name site opts)
-         files (site-files data opts)]
-      (apply ->files data files))))
-
-(defn create-api
-  [parent-name {:keys [api] :as options}]
-  (let [data (api-template-data parent-name api options)
-        files (api-files data options)]
-     (apply ->files data files)))
-
-(defn create-site+api
-  [parent-name options]
-  (binding [*force?* true]
-    (do
-      (create-site parent-name options true)
-      (create-api parent-name options))))
-
 (defn api-vars
   [api-name]
   {:api-ns-name (sanitize-ns api-name)
@@ -121,19 +99,26 @@
   [parent-name]
   {:db-name (string/replace parent-name "-" "_")})
 
-(defn create-projects
-  [name template-type {:keys [api site] :as options} summary]
-  (let [db-name (db-name name)
-        site+api (site+api-vars api site)
-        compose-vars (merge site+api db-name)
-        compose-fn (partial spit (str name "/docker-compose.yml"))]
-    (case template-type
-      "api" (create-api name options)
-      "site" (create-site name options)
-      "site+api" (create-site+api name options)
-      (exit 1 (usage summary)))
+(defn create-api
+  [parent-name {:keys [api] :as options}]
+  (let [data (merge (api-template-data parent-name api options) (api-vars api) (db-name parent-name))
+        files (api-files data options)]
+     (apply ->files data files)))
 
-    (compose-fn (render (str template-type "/docker-compose.yml") compose-vars))))
+(defn create-site
+  [parent-name {:keys [site api db] :as options}]
+  (binding  [*force?* true]
+    (if (= db :api) (create-api parent-name (assoc options :db :mongodb)))
+    (let [data (merge (site-template-data parent-name site options) (site+api-vars api site) (db-name parent-name))
+          files (site-files data options)]
+      (apply ->files data files))))
+
+(defn create-projects
+  [name template-type options summary]
+  (case template-type
+    "api" (create-api name options)
+    "site" (create-site name options)
+    (exit 1 (usage summary))))
 
 (defn life
   [name & args]

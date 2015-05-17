@@ -8,7 +8,7 @@
 
 (defn render-api-files
   [data]
-  [["{{sanitized-api}}/resources/routes.txt" (render "api/resources/routes.txt")]])
+  [["{{sanitized-api}}/resources/routes.txt" (render "api/common/resources/routes.txt")]])
 
 (defn api-files
   [data args]

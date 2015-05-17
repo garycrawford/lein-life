@@ -1,7 +1,0 @@
-GET  /                   home
-POST /person             create-person-post
-GET  /person/:id/update  update-person-get
-POST /person/:id/update  update-person-post
-GET  /person/:id/delete  delete-person-get
-POST /person/:id/delete  delete-person-post
-GET  /healthcheck        healthcheck

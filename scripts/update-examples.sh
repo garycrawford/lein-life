@@ -19,6 +19,20 @@ create_new () {
   lein new life $1 $2
 }
 
-create_new example-site site
-create_new example-api api
-create_new example-both site+api
+
+if [ -d "./example-site" ]; then
+	rm -rf "./example-site"
+fi
+lein new life example-site site
+
+
+if [ -d "./example-api" ]; then
+	rm -rf "./example-api"
+fi
+lein new life example-api api
+
+
+if [ -d "./example-both" ]; then
+	rm -rf "./example-both"
+fi
+lein new life example-both site --db api
