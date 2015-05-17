@@ -1,6 +1,26 @@
 (ns leiningen.new.life.customs
-  (:require [leiningen.new.templates :refer [renderer]]
-            [leiningen.new.db-template :refer :all]))
+  (:require [leiningen.new.templates :refer [renderer]]))
+
+(defmulti api-files :db)
+(defmulti site-files :db)
+(defmulti dependencies :db)
+(defmulti environment-variables :db)
+
+(defmethod api-files :default
+  [_ _]
+  [])
+
+(defmethod site-files :default
+  [_ _]
+  [])
+
+(defmethod dependencies :default
+  [_]
+  [])
+
+(defmethod environment-variables :default
+  [_]
+  [])
 
 (defmethod api-files :mongodb
   [_ data]

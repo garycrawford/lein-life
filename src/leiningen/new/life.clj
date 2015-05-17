@@ -5,8 +5,8 @@
             [leiningen.new.site :as site]
             [clojure.string :as string]
             [camel-snake-kebab.core :refer [->PascalCase]]
-            [leiningen.new.common-api-templates :refer [api-var-map]]
-            [leiningen.new.common-site-templates :refer [site-var-map]]
+;            [leiningen.new.common-api-templates :refer [api-var-map]]
+;            [leiningen.new.common-site-templates :refer [site-var-map]]
             [leiningen.new.templates :refer  [*force?*]]))
 
 (def render (renderer "life"))
@@ -59,7 +59,7 @@
             :location-template "{{location}}"
             :anti-forgery-field "{{{anti-forgery-field}}}"
             :title-template "{{title}}"}
-          (site-var-map sanitized-ns-name options))))
+          (site/site-var-map sanitized-ns-name options))))
 
 (defn names
   [parent-name ns-name](string/replace ns-name "-" "_")
@@ -75,7 +75,7 @@
             :project-root (str project-name "/")
             :dockerised-svr (str (->PascalCase ns-name) "DevSvr")
             :sanitized-api  (name-to-path ns-name)}
-          (api-var-map sanitized-ns-name options))))
+          (api/api-var-map sanitized-ns-name options))))
 
 (defn api-vars
   [api-name]

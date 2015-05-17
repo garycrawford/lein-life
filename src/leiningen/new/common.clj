@@ -1,4 +1,4 @@
-(ns leiningen.new.common-files
+(ns leiningen.new.common
   (:require [leiningen.new.templates :refer [renderer]]))
 
 (def render (renderer "life"))
