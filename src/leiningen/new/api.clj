@@ -1,6 +1,6 @@
 (ns leiningen.new.api
   (:require [leiningen.new.templates :refer [renderer]]
-            [leiningen.new.mongo-template :refer :all]
+            [leiningen.new.life.customs :refer :all]
             [leiningen.new.db-template :refer :all]
             [leiningen.new.common-files :refer [render-common-files]]))
 
@@ -10,8 +10,8 @@
   [data]
   [["{{sanitized-api}}/resources/routes.txt" (render "api/common/resources/routes.txt")]])
 
-(defn api-files
+(defn files
   [data args]
   (concat (render-api-files data)
-          (db-api-files args data)
+          (api-files args data)
           (render-common-files data "{{sanitized-api}}")))

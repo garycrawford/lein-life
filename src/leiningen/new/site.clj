@@ -1,7 +1,6 @@
 (ns leiningen.new.site
   (:require [leiningen.new.templates :refer [renderer]]
-            [leiningen.new.mongo-template :refer :all]
-            [leiningen.new.api-template :refer :all]
+            [leiningen.new.life.customs :refer :all]
             [leiningen.new.db-template :refer :all]
             [leiningen.new.common-files :refer [render-common-files]]))
 
@@ -18,8 +17,8 @@
    ["{{sanitized-site}}/resources/templates/home/not-found.mustache" (render "site/common/resources/templates/home/not-found.mustache" data)]
    ["{{sanitized-site}}/src/{{sanitized-site}}/views/home.clj" (render "site/common/src/views/home.clj" data)]])
 
-(defn site-files
+(defn files
   [data args]
   (concat (render-site-files data)
-          (db-site-files args data)
+          (site-files args data)
           (render-common-files data "{{sanitized-site}}")))

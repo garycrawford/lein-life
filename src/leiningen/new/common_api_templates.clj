@@ -1,12 +1,10 @@
 (ns leiningen.new.common-api-templates
   (:require [camel-snake-kebab.core :refer [->PascalCase]]
-            [clojure.tools.cli :refer  [parse-opts]]
-            [leiningen.new.api :refer [api-files]]
-            [leiningen.new.site :refer [site-files]]
             [clojure.string :as string]
             [clostache.parser :refer [render]]
             [leiningen.new.db-template :refer :all]
-            [leiningen.new.mongo-template :refer :all]))
+;            [leiningen.new.mongo-template :refer :all]
+            ))
 
 (defn api-vals
   [ns-name]
@@ -17,13 +15,13 @@
 
 (defn dev-profile
   [ns-name args]
-  (let [lines (db-environment-variables args)
+  (let [lines (environment-variables args)
         template (string/join "\n             " lines)]
     (render template (api-vals ns-name))))
 
 (defn project-deps
   [args]
-  (->> (db-dependencies args)
+  (->> (dependencies args)
        (string/join "\n                ")))
 
 (defn healthcheck-list-template

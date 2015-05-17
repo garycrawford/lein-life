@@ -1,8 +1,8 @@
 (ns leiningen.new.life
   (:use [leiningen.new.templates :only [renderer name-to-path sanitize-ns ->files]])
   (:require [clojure.tools.cli :refer  [parse-opts]]
-            [leiningen.new.api :refer [api-files]]
-            [leiningen.new.site :refer [site-files]]
+            [leiningen.new.api :as api]
+            [leiningen.new.site :as site]
             [clojure.string :as string]
             [camel-snake-kebab.core :refer [->PascalCase]]
             [leiningen.new.common-api-templates :refer [api-var-map]]
@@ -102,7 +102,7 @@
 (defn create-api
   [parent-name {:keys [api] :as options}]
   (let [data (merge (api-template-data parent-name api options) (api-vars api) (db-name parent-name))
-        files (api-files data options)]
+        files (api/files data options)]
      (apply ->files data files)))
 
 (defn create-site
@@ -110,7 +110,7 @@
   (binding  [*force?* true]
     (if (= db :api) (create-api parent-name (assoc options :db :mongodb)))
     (let [data (merge (site-template-data parent-name site options) (site+api-vars api site) (db-name parent-name))
-          files (site-files data options)]
+          files (site/files data options)]
       (apply ->files data files))))
 
 (defn create-projects
