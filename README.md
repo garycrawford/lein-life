@@ -30,10 +30,9 @@ You can use this template by executing:
     Types:
       api      | Create a new web api
       site     | Create a new site
-      site+api | Create a new site with a new api backend
     
     Options:
-      -d, --db   | DATABASE  | Database to be used. Currently only supports `mongodb`
+      -d, --db   | DATABASE  | Database to be used. Supports `mongodb` for api or `mongodb` & `api` for site
       -s, --site | SITE-NAME | Name of the site project
       -a, --api  | API-NAME  | Name of the api project
       -h, --help |           |
