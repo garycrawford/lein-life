@@ -5,20 +5,24 @@
             [leiningen.new.site :as site]
             [clojure.string :as string]
             [camel-snake-kebab.core :refer [->PascalCase]]
-;            [leiningen.new.common-api-templates :refer [api-var-map]]
-;            [leiningen.new.common-site-templates :refer [site-var-map]]
-            [leiningen.new.templates :refer  [*force?*]]))
+            [leiningen.new.templates :refer  [*force?*]])
+  (:import (java.net InetAddress)))
 
 (def render (renderer "life"))
 
+(def not-nil? (complement nil?))
+
 (def cli-options
-  [["-d" "--db DATABASE" "Database to be used. Supports `mongodb` and `api`"
+  [["-i" "--docker-ip DOCKER_IP" "IP address for Docker or boot2docker"
+    :default "172.17.42.1"
+    :validate [#(re-find #"\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b" %) "Must be a valid ip"]]
+   ["-d" "--db DATABASE" "Database to be used. Supports `mongodb` and `api`"
     :parse-fn keyword
     :default :mongodb
     :validate [#(or (= % :mongodb) (= % :api)) "Currently only mongodb or api are currently supported"]]
-   ["-s" "--site SITE" "Name of the site project"
+   ["-s" "--site-name SITE_NAME" "Name of the site project"
     :default "site"]
-   ["-a" "--api API" "Name of the api project"
+   ["-a" "--api-name API_NAME" "Name of the api project"
     :default "api"]
    ["-h" "--help"]])
 
@@ -39,7 +43,7 @@
        (string/join \newline)))
 
 (defn error-msg [errors]
-  (str "The following errors occurred while parsing your command:\n\n"
+  (println "The following errors occurred while parsing your command:\n\n"
        (string/join \newline errors)))
 
 (defn exit [status msg]
@@ -50,7 +54,7 @@
   (let [sanitized-ns-name (sanitize-ns ns-name)]
     (merge {:name project-name
             :ns-name sanitized-ns-name
-            :api-ns-name (sanitize-ns (:api options))
+            :api-ns-name (sanitize-ns (:api-name options))
             :year (str (.get (java.util.Calendar/getInstance) java.util.Calendar/YEAR))
             :project-root (str project-name "/")
             :sanitized-site (name-to-path ns-name)
@@ -58,7 +62,8 @@
             :name-template "{{name}}"
             :location-template "{{location}}"
             :anti-forgery-field "{{{anti-forgery-field}}}"
-            :title-template "{{title}}"}
+            :title-template "{{title}}"
+            :docker-ip (:docker-ip options)}
           (site/site-var-map sanitized-ns-name options))))
 
 (defn names
@@ -74,7 +79,8 @@
             :year (str (.get (java.util.Calendar/getInstance) java.util.Calendar/YEAR))
             :project-root (str project-name "/")
             :dockerised-svr (str (->PascalCase ns-name) "DevSvr")
-            :sanitized-api  (name-to-path ns-name)}
+            :sanitized-api  (name-to-path ns-name)
+            :docker-ip (:docker-ip options)}
           (api/api-var-map sanitized-ns-name options))))
 
 (defn api-vars
@@ -100,16 +106,16 @@
   {:db-name (string/replace parent-name "-" "_")})
 
 (defn create-api
-  [parent-name {:keys [api] :as options}]
-  (let [data (merge (api-template-data parent-name api options) (api-vars api) (db-name parent-name))
+  [parent-name {:keys [api-name] :as options}]
+  (let [data (merge (api-template-data parent-name api-name options) (api-vars api-name) (db-name parent-name))
         files (api/files data options)]
      (apply ->files data files)))
 
 (defn create-site
-  [parent-name {:keys [site api db] :as options}]
+  [parent-name {:keys [site-name api-name db] :as options}]
   (binding  [*force?* true]
     (if (= db :api) (create-api parent-name (assoc options :db :mongodb)))
-    (let [data (merge (site-template-data parent-name site options) (site+api-vars api site) (db-name parent-name))
+    (let [data (merge (site-template-data parent-name site-name options) (site+api-vars api-name site-name) (db-name parent-name))
           files (site/files data options)]
       (apply ->files data files))))
 

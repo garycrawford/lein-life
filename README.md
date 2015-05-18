@@ -52,10 +52,10 @@ I find that the Text Triumvirate (zsh, vim & tmux) gives me everything I need fo
 When you connect to a REPL in a Life project the REPL is actually running inside a Docker containe, so you have to do a remote connection to it:
 
     ;; site
-    $ lein repl :connect 192.168.59.103:21212
+    $ lein repl :connect $DOCKER_IP:21212
     
     ;; api
-    $ lein repl :connect 192.168.59.103:31313
+    $ lein repl :connect $DOCKER_IP:31313
     
 ### Enable autotest
 
@@ -78,7 +78,7 @@ The screenshot below shows the default metrics available as soon as you start yo
 
 <img src="https://raw.githubusercontent.com/garycrawford/lein-life/master/images/stats.png" alt="Grafana stats" title="Screenshot of Grafana stats" />
 
-To see these simply browse to http://192.168.59.103. (N.B. so far this is only tested on a Mac using boot2docker). You will start to see stats once you start your 'site' or 'API' (see above).
+To see these simply browse to http://$DOCKER_IP. (N.B. so far this is only tested on a Mac using boot2docker). You will start to see stats once you start your 'site' or 'API' (see above).
 
 N.B. boot2docker has a clock skew issue - if you cannot see metrics you should try running the following command on the host:
 

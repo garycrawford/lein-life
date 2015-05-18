@@ -7,7 +7,7 @@
 
 (defn person-uri
   [id]
-  (str "http://192.168.59.103:4321/api/people/" id))
+  (str "http://{{docker-ip}}:4321/api/people/" id))
 
 (defn whitelist
   [person]

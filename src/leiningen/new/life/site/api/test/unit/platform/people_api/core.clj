@@ -5,7 +5,7 @@
             [ring.util.response :refer [status header created]]
             [{{ns-name}}.platform.people-api.core :refer :all]))
 
-(def person-uri "http://192.168.59.103:4321/api/people/id")
+(def person-uri "http://{{docker-ip}}:4321/api/people/id")
 
 (def person {:name "anon" :location "hidden"})
 (def person-with-id {:id "id" :name "anon" :location "hidden"})
@@ -47,13 +47,13 @@
        (fact "should contain created success flag"
              (create-person person) => (contains {:created true})
              (provided
-               (client/post people-uri {:form-params person}) => (-> (created "http://192.168.59.103:4321/api/people/id" (encode {:result {:created true :id "id"}}))
+               (client/post people-uri {:form-params person}) => (-> (created "http://{{docker-ip}}:4321/api/people/id" (encode {:result {:created true :id "id"}}))
                                                                      (header "Content-Type" "application/json"))))
 
        (fact "should contain id of created person"
              (create-person person) => (contains {:id "id"})
              (provided
-               (client/post people-uri {:form-params person}) => (-> (created "http://192.168.59.103:4321/api/people/id" (encode {:result {:created true :id "id"}}))
+               (client/post people-uri {:form-params person}) => (-> (created "http://{{docker-ip}}:4321/api/people/id" (encode {:result {:created true :id "id"}}))
                                                                      (header "Content-Type" "application/json")))))
 
 (facts "response from update-person"
@@ -61,7 +61,7 @@
              (update-person person-with-id) => {:updated true}
              (provided
                (client/put person-uri {:form-params person-with-id}) => (-> response-204
-                                                                            (header "Location" "http://192.168.59.103:4321/api/people/id")))))
+                                                                            (header "Location" "http://{{docker-ip}}:4321/api/people/id")))))
 
 (facts "response from delete-person"
        (fact "should contain deleted success flag"

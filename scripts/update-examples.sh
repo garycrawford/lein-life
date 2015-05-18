@@ -23,16 +23,16 @@ create_new () {
 if [ -d "./example-site" ]; then
 	rm -rf "./example-site"
 fi
-lein new life example-site site
+lein new life example-site site -i 192.168.59.103
 
 
 if [ -d "./example-api" ]; then
 	rm -rf "./example-api"
 fi
-lein new life example-api api
+lein new life example-api api -i 192.168.59.103
 
 
 if [ -d "./example-both" ]; then
 	rm -rf "./example-both"
 fi
-lein new life example-both site --db api
+lein new life example-both site --db api -i 192.168.59.103

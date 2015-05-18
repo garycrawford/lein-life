@@ -73,4 +73,4 @@
 
 (defmethod environment-variables :mongodb
   [_]
-  [":mongodb-uri \"mongodb://192.168.59.103/{{path}}\""])
+  [":mongodb-uri \"mongodb://{{docker-ip}}/{{path}}\""])

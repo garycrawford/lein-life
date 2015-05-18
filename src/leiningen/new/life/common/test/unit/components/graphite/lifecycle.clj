@@ -30,4 +30,4 @@
     config => (contains
                 {:prefix "stats.timers.{{ns-name}}.{{dockerised-svr}}"
                  :port   2003
-                 :host   "192.168.59.103"})))
+                 :host   "{{docker-ip}}"})))

@@ -10,8 +10,8 @@
    - db
   hostname: "{{site-dockerised-svr}}"
   environment:
-    MONGODB_URI: mongodb://192.168.59.103/{{db-name}}
-    METRICS_HOST: 192.168.59.103
+    MONGODB_URI: mongodb://{{docker-ip}}/{{db-name}}
+    METRICS_HOST: {{docker-ip}}
     METRICS_PORT: 2003
     APP_NAME: {{site-ns-name}}
   command: lein repl :headless :host 0.0.0.0 :port 21212

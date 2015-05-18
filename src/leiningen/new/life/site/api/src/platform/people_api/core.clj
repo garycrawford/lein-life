@@ -4,7 +4,7 @@
             [cheshire.core :refer [decode]]
             [dire.core :refer [with-handler!]]))
 
-(def people-uri "http://192.168.59.103:4321/api/people")
+(def people-uri "http://{{docker-ip}}:4321/api/people")
 
 (defn person-by-id-uri
   "Creates a URI to obtain person information from a person id"

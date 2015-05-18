@@ -8,7 +8,7 @@
             [cheshire.core :refer [encode]]
             [clojure.string :refer [split]]))
 
-(def people-uri "http://192.168.59.103:4321/api/people")
+(def people-uri "http://{{docker-ip}}:4321/api/people")
 
 (def db (atom []))
 

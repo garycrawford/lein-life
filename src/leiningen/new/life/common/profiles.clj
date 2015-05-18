@@ -13,7 +13,7 @@
                       [org.clojure/test.check "0.7.0"]
                       [com.gfredericks/test.chuck "0.1.16"]
                       [kerodon "0.6.0"]]
-       :env {:metrics-host "192.168.59.103"
+       :env {:metrics-host "{{docker-ip}}"
              :metrics-port 2003
              :app-name "{{ns-name}}"
              :hostname "{{dockerised-svr}}"
