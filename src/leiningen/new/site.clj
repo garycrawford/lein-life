@@ -129,32 +129,24 @@
    :project-deps (project-deps options)
    :dev-profile (dev-profile ns-name options)})
 
-(defn site-vars
-  [site-name]
-  {:site-ns-name (sanitize-ns site-name)
-   :site-docker-name (string/replace site-name "-" "")
-   :site-dockerised-svr (str (->PascalCase site-name) "DevSvr")
-   :site-path (string/replace site-name "-" "_")})
-
-(defn db-name
-  [parent-name]
-  {:db-name (string/replace parent-name "-" "_")})
-
 (defn site-template-data
   [project-name ns-name options]
   (let [sanitized-ns-name (sanitize-ns ns-name)]
     (merge {:name project-name
             :ns-name sanitized-ns-name
+            :site-ns-name sanitized-ns-name
             :api-ns-name (sanitize-ns (:api-name options))
             :year (str (.get (java.util.Calendar/getInstance) java.util.Calendar/YEAR))
             :project-root (str project-name "/")
             :sanitized-site (name-to-path ns-name)
             :dockerised-svr (str (->PascalCase ns-name) "DevSvr")
+            :site-docker-name (string/replace ns-name "-" "")
+            :site-dockerised-svr (str (->PascalCase ns-name) "DevSvr")
+            :site-path (string/replace ns-name "-" "_")  
             :name-template "{{name}}"
             :location-template "{{location}}"
             :anti-forgery-field "{{{anti-forgery-field}}}"
             :title-template "{{title}}"
-            :docker-ip (:docker-ip options)}
-          (site-var-map sanitized-ns-name options)
-          (site-vars ns-name)
-          (db-name project-name))))
+            :docker-ip (:docker-ip options)
+            :db-name (string/replace project-name "-" "_")}
+          (site-var-map sanitized-ns-name options))))
