@@ -47,13 +47,13 @@
        (fact "should contain created success flag"
              (create-person person) => (contains {:created true})
              (provided
-               (client/post people-uri {:form-params person}) => (-> (created "http://{{docker-ip}}:4321/api/people/id" (encode {:result {:created true :id "id"}}))
+               (client/post people-uri {:form-params person}) => (-> (created person-uri (encode {:result {:created true :id "id"}}))
                                                                      (header "Content-Type" "application/json"))))
 
        (fact "should contain id of created person"
              (create-person person) => (contains {:id "id"})
              (provided
-               (client/post people-uri {:form-params person}) => (-> (created "http://{{docker-ip}}:4321/api/people/id" (encode {:result {:created true :id "id"}}))
+               (client/post people-uri {:form-params person}) => (-> (created person-uri (encode {:result {:created true :id "id"}}))
                                                                      (header "Content-Type" "application/json")))))
 
 (facts "response from update-person"
@@ -61,7 +61,7 @@
              (update-person person-with-id) => {:updated true}
              (provided
                (client/put person-uri {:form-params person-with-id}) => (-> response-204
-                                                                            (header "Location" "http://{{docker-ip}}:4321/api/people/id")))))
+                                                                            (header "Location" person-uri)))))
 
 (facts "response from delete-person"
        (fact "should contain deleted success flag"

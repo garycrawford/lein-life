@@ -12,6 +12,10 @@
 
 (def mongodb (new-mongodb "people_integration_tests"))
 
+(defn validate-person-uri
+  [uri]
+  (re-matches #"http:\/\/{{docker-ip}}:4321\/api\/people\/.*" uri))
+
 (defn setup
   []
   (alter-var-root #'mongodb component/start)
@@ -26,7 +30,7 @@
 
   (facts "when listing people but no-one exists"
     (let [app (create-handler {:people {:mongodb mongodb}})
-          res (app (mock/request :get "http://{{docker-ip}}:4321/api/people"))]
+          res (app (mock/request :get "/api/people"))]
 
       (fact "response has a 200 status code"
           (:status res) => 200)
@@ -39,7 +43,7 @@
 
   (facts "when creating people"
     (let [app (create-handler {:people {:mongodb mongodb}})
-          res (app (mock/request :post "http://{{docker-ip}}:4321/api/people" {:name "gary" :location "home"}))]
+          res (app (mock/request :post "/api/people" {:name "gary" :location "home"}))]
 
       (fact "response has a 201 status code"
         (:status res) => 201)
@@ -48,11 +52,11 @@
         (get-header res "Content-Type") => "application/json")
 
       (fact "response has an empty vector as a result"
-        (get-header res "Location") => #(re-matches #"http:\/\/{{docker-ip}}:4321\/api\/people\/.*" %))))
+        (get-header res "Location") => validate-person-uri)))
 
   (facts "when listing people and people exist"
     (let [app (create-handler {:people {:mongodb mongodb}})
-          res (app (mock/request :get "http://{{docker-ip}}:4321/api/people"))]
+          res (app (mock/request :get "/api/people"))]
 
       (fact "the response has a 200 status code"
         (:status res) => 200)
@@ -65,7 +69,7 @@
 
   (facts "when reading people"
     (let [app (create-handler {:people {:mongodb mongodb}})
-          setup-response (app (mock/request :post "http://{{docker-ip}}:4321/api/people" {:name "erin" :location "garden"}))
+          setup-response (app (mock/request :post "/api/people" {:name "erin" :location "garden"}))
           location-uri (get-header setup-response "Location")
           id (last (split location-uri #"/"))
           response (app (mock/request :get location-uri))]
@@ -81,7 +85,7 @@
 
   (facts "when updating people"
     (let [app (create-handler {:people {:mongodb mongodb}})
-          setup-response (app (mock/request :post "http://{{docker-ip}}:4321/api/people" {:name "erin" :location "garden"}))
+          setup-response (app (mock/request :post "/api/people" {:name "erin" :location "garden"}))
           location-uri (get-header setup-response "Location")
           id (last (split location-uri #"/"))
           response (app (mock/request :put location-uri {:location "table"}))]
@@ -93,14 +97,14 @@
         (get-header response "Content-Type") => "application/json")
 
       (fact "response contains a location header with pointer to the resurce"
-        (get-header response "Location") => #(re-matches #"http:\/\/{{docker-ip}}:4321\/api\/people\/.*" %))
+        (get-header response "Location") => validate-person-uri)
 
      (fact "the updated data is available"
        (decode (:body (app (mock/request :get location-uri))) true) => (contains {:result (contains {:location "table"})}))))
 
   (facts "when deleting people"
     (let [app (create-handler {:people {:mongodb mongodb}})
-          setup-response (app (mock/request :post "http://{{docker-ip}}:4321/api/people" {:name "erin" :location "garden"}))
+          setup-response (app (mock/request :post "/api/people" {:name "erin" :location "garden"}))
           location-uri (get-header setup-response "Location")
           id (last (split location-uri #"/"))
           response (app (mock/request :delete location-uri))]
