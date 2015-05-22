@@ -11,7 +11,7 @@
 > and then we die._
 > - Mark Renton, Trainspotting by Irvine Welsh
 
-Rents is a Leiningen template to give your project a better environment and chance in life than Mark Renton! It utilises Docker to give you a production like environment running locally on your dev machine where things like metrics and logging now become first class citizens of you dev lifecycle.
+Life is a Leiningen template to give your project a better environment and chance in life than Mark Renton! It utilises Docker to give you a production like environment running locally on your dev machine where things like metrics and logging now become first class citizens of you dev lifecycle.
 
 
 # Usage
