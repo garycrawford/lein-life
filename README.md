@@ -32,10 +32,11 @@ You can use this template by executing:
       site     | Create a new site
     
     Options:
-      -d, --db   | DATABASE  | Database to be used. Supports `mongodb` for api or `mongodb` & `api` for site
-      -s, --site | SITE-NAME | Name of the site project
-      -a, --api  | API-NAME  | Name of the api project
-      -h, --help |           |
+      -d, --db        | DATABASE  | Database to be used. Supports `mongodb` for api or `mongodb` & `api` for site
+      -i, --docker-ip | DOCKER_IP | IP address for Docker or boot2docker
+      -s, --site-name | SITE-NAME | Name of the site project
+      -a, --api-name  | API-NAME  | Name of the api project
+      -h, --help      |           |
 
 
 You can then launch the igenerated app or site by executing:
