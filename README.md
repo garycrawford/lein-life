@@ -17,6 +17,8 @@ Life is a Leiningen template to give your project a better chance in life than M
 # Usage
 [![Build Status](https://snap-ci.com/garycrawford/lein-life/branch/master/build_image)](https://snap-ci.com/garycrawford/lein-life/branch/master)
 
+A video demonstrating how to use Life can be found [here on YouTube](https://youtu.be/ZloJuOiqA6w).
+
 _Caveat - heavy development underway... functionality being added rapidly and changes made regularly._
 
 ## Dependencies
