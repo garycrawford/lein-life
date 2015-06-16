@@ -35,12 +35,22 @@ You can use this template by executing:
     
     Options:
       -d, --db        | DATABASE  | Database to be used. Supports `mongodb` for api or `mongodb` & `api` for site
-      -i, --docker-ip | DOCKER_IP | IP address for Docker or boot2docker
+      -i, --docker-ip | DOCKER_IP | IP address for Docker or boot2docker (see Finding the Docker IP below)
       -s, --site-name | SITE-NAME | Name of the site project
       -a, --api-name  | API-NAME  | Name of the api project
       -h, --help      |           |
 
 
+## Finding the Docker IP
+If you are using a Linux distro you can get the IP from the "docker0" virtual interface by executing:
+
+    $ ifconfig
+
+If you are using a Mac with boot2docker you can simply execute:
+
+    $ boot2docker ip
+    
+## Launching the ecosystem
 You can then launch the generated app or site by executing:
 
     $ cd <project-name>
