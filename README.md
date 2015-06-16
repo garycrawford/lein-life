@@ -41,7 +41,7 @@ You can use this template by executing:
       -h, --help      |           |
 
 
-You can then launch the igenerated app or site by executing:
+You can then launch the generated app or site by executing:
 
     $ cd <project-name>
     $ docker-compose up
@@ -52,7 +52,7 @@ I find that the Text Triumvirate (zsh, vim & tmux) gives me everything I need fo
 
 ## Working with a Life generated project
 ### Get REPL to api or site
-When you connect to a REPL in a Life project the REPL is actually running inside a Docker containe, so you have to do a remote connection to it:
+When you connect to a REPL in a Life project the REPL is actually running inside a Docker container, so you have to do a remote connection to it:
 
     ;; site
     $ lein repl :connect $DOCKER_IP:21212
